@@ -4,11 +4,17 @@ abstract class Response {
     String response;
     int status;
 
+    boolean error;
+
     public String getResponse() {
         return response;
     }
 
     public int getStatus() {
         return status;
+    }
+
+    public boolean isError() {
+        return error;
     }
 }
