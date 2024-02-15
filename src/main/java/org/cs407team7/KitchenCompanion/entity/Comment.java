@@ -49,7 +49,7 @@ public class Comment {
     private Long createdBy;
 
     public Comment() {
-        comments = new ArrayList<>();
+//        comments = new ArrayList<>();
     }
 
     public Long getId() {
@@ -68,13 +68,13 @@ public class Comment {
         this.content = content;
     }
 
-    public List<Long> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Long> comments) {
-        this.comments = comments;
-    }
+//    public List<Long> getComments() {
+//        return comments;
+//    }
+//
+//    public void setComments(List<Long> comments) {
+//        this.comments = comments;
+//    }
 
     public Long getCreatedBy() {
         return createdBy;
