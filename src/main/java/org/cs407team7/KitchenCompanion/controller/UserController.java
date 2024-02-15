@@ -142,6 +142,6 @@ public class UserController {
             WebAuthenticationDetails [RemoteIpAddress=0:0:0:0:0:0:0:1, SessionId=8abf9162-c667-4d69-9254-ea13eb8fac34]
             true
          */
-        return ResponseEntity.ok().body(new GenericResponse("AuthSuccess for ") + user.getUsername());
+        return ResponseEntity.ok().body(new GenericResponse("AuthSuccess for " + user.getUsername()));
     }
 }
