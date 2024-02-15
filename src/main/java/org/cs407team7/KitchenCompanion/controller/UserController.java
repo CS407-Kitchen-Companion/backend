@@ -5,17 +5,18 @@ import org.cs407team7.KitchenCompanion.entity.User;
 import org.cs407team7.KitchenCompanion.repository.UserRepository;
 import org.cs407team7.KitchenCompanion.responseobject.ErrorResponse;
 import org.cs407team7.KitchenCompanion.responseobject.GenericResponse;
+import org.cs407team7.KitchenCompanion.security.JwtResponse;
+import org.cs407team7.KitchenCompanion.security.JwtTokenUtil;
+import org.cs407team7.KitchenCompanion.security.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -80,27 +81,67 @@ public class UserController {
     }
 
 
-    @PostMapping("login")
-    public ResponseEntity<Object> login(@RequestBody @Valid Map<String, String> payload) {
-//        try {
-//            Authentication authenticate = authenticationManager
-//                    .authenticate(
-//                            new UsernamePasswordAuthenticationToken(
-//                                    request.getUsername(), request.getPassword()
-//                            )
-//                    );
-//
-//            User user = (User) authenticate.getPrincipal();
-//
-//            return ResponseEntity.ok()
-//                    .header(
-//                            HttpHeaders.AUTHORIZATION,
-//                            jwtTokenUtil.generateAccessToken(user)
-//                    )
-//                    .body(userViewMapper.toUserView(user));
-//        } catch (BadCredentialsException ex) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-        return null;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private JwtUserDetailsService userDetailsService;
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody Map<String, String> payload) throws Exception {
+
+        System.out.println("auth1");
+        authenticate(payload.get("username"), payload.get("password"));
+        System.out.println("auth2");
+
+        final UserDetails userDetails = userDetailsService
+                .loadUserByUsername(payload.get("username"));
+
+        final String token = jwtTokenUtil.generateToken(userDetails);
+
+        return ResponseEntity.ok(new JwtResponse(token));
+    }
+
+    private void authenticate(String username, String password) throws Exception {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            System.out.println("auth2a");
+        } catch (DisabledException e) {
+            System.out.println("auth3");
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            System.out.println("auth4");
+            throw new Exception("INVALID_CREDENTIALS", e);
+        } catch (Exception e) {
+            System.out.println("auth5 " + e);
+            throw e;
+        }
+    }
+
+    @GetMapping(path = "/testauth")
+    public @ResponseBody ResponseEntity<Object> testAuth() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth instanceof AnonymousAuthenticationToken) {
+            System.out.println("Anonymous User, not auth.");
+            return ResponseEntity.ok().body(new GenericResponse("Not Auth"));
+        }
+        User user = (User) auth.getPrincipal();
+        System.out.println(user.getEmail()); // email
+        System.out.println(auth.getCredentials()); // password (should be null)
+        System.out.println(auth.getAuthorities()); // authorities (roles)
+        System.out.println(auth.getDetails()); // WebAuthenticationDetails
+        System.out.println(auth.isAuthenticated()); // is authenticated?
+        /*
+         TODO: Fix default state:
+            anonymousUser
+
+            [ROLE_ANONYMOUS]
+            WebAuthenticationDetails [RemoteIpAddress=0:0:0:0:0:0:0:1, SessionId=8abf9162-c667-4d69-9254-ea13eb8fac34]
+            true
+         */
+        return ResponseEntity.ok().body(new GenericResponse("AuthSuccess for ") + user.getUsername());
     }
 }
