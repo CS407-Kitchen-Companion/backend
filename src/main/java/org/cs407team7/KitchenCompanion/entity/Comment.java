@@ -1,4 +1,4 @@
-package org.cs407team7.KitchenCompanion.controller;
+package org.cs407team7.KitchenCompanion.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
