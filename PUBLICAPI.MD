@@ -6,6 +6,14 @@
 
 # User API (/user)
 
+## Table of Contents
+
+| Name         | Link                        | Description               |
+|--------------|-----------------------------|---------------------------|
+| User API     | [here](#User-Public-API)    | User Related Functions    |
+| Recipies API | [here](#Recipie-Public-API) | Recipie Related Functions |
+
+
 ## User Public API
 
 | Method | Mapping        | Description                        | Model/Body/Params         | Auth | Status |
@@ -66,6 +74,11 @@
   "token": "eyJhbGciOiJIUzUxMiJ9..."
 }
 ```
+## Recipie Public API
+| Method | Mapping        | Description                        | Model/Body/Params               | Auth | Status |
+|--------|----------------|------------------------------------|---------------------------------|------|--------|
+| POST   | `/new`         | Used in new user Creation          | See [new recipie](#new-recipie) | N    | Active |
+
 
 # Anything further is not valid
 
