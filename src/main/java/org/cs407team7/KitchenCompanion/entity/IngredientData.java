@@ -15,7 +15,7 @@ import java.time.Instant;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
-public class Ingredient {
+public class IngredientData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
