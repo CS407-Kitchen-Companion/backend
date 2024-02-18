@@ -13,6 +13,12 @@
 | User API     | [here](#User-Public-API)    | User Related Functions    |
 | Recipies API | [here](#Recipie-Public-API) | Recipie Related Functions |
 
+## API Endpoints
+
+| Name          | Link                                                           | Description                                           |
+|---------------|----------------------------------------------------------------|-------------------------------------------------------|
+| Dev Endpoint  | `https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/`   | Actual delpoyed/running SB Server                     |
+| Mock Endpoint | `https://kitchencompanion.eastus.cloudapp.azure.com/api/mock/` | Python Django mock server (faster features, usually?) |
 
 ## User Public API
 
@@ -36,7 +42,7 @@
 
 ### new user
 
-#### Request
+#### Request Body
 
 ```json
 {
@@ -46,7 +52,7 @@
 }
 ```
 
-#### Reply
+#### Reply Body
 
 ```json
 {
@@ -58,7 +64,7 @@
 
 ### user login
 
-#### Request
+#### Request Body
 
 ```json
 {
@@ -67,18 +73,19 @@
 }
 ```
 
-#### Response
+#### Response Body
 
 ```json
 {
   "token": "eyJhbGciOiJIUzUxMiJ9..."
 }
 ```
-## Recipie Public API
-| Method | Mapping        | Description                        | Model/Body/Params               | Auth | Status |
-|--------|----------------|------------------------------------|---------------------------------|------|--------|
-| POST   | `/new`         | Used in new user Creation          | See [new recipie](#new-recipie) | N    | Active |
 
+## Recipie Public API
+
+| Method | Mapping | Description               | Model/Body/Params               | Auth | Status |
+|--------|---------|---------------------------|---------------------------------|------|--------|
+| POST   | `/new`  | Used in new user Creation | See [new recipie](#new-recipie) | N    | Active |
 
 # Anything further is not valid
 
