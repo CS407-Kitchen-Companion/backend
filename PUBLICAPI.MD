@@ -52,7 +52,7 @@
 }
 ```
 
-#### Reply Body
+#### Response Body
 
 ```json
 {
@@ -101,7 +101,7 @@
 }
 ```
 
-#### Reply Body
+#### Response Body
 
 ```json
 {
@@ -123,7 +123,7 @@
 N/A, use path:
 `/recipe/{id}`
 
-#### Reply Body
+#### Response Body
 
 ```json
 {
