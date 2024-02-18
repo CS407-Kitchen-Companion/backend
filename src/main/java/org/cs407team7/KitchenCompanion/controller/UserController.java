@@ -36,6 +36,15 @@ public class UserController {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private JwtUserDetailsService userDetailsService;
+
 
     @PostMapping(path = "/new")
     public ResponseEntity<Object> addNewUser(
@@ -81,15 +90,6 @@ public class UserController {
     }
 
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
-    @Autowired
-    private JwtUserDetailsService userDetailsService;
-
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody Map<String, String> payload) throws Exception {
 
@@ -134,14 +134,6 @@ public class UserController {
         System.out.println(auth.getAuthorities()); // authorities (roles)
         System.out.println(auth.getDetails()); // WebAuthenticationDetails
         System.out.println(auth.isAuthenticated()); // is authenticated?
-        /*
-         TODO: Fix default state:
-            anonymousUser
-
-            [ROLE_ANONYMOUS]
-            WebAuthenticationDetails [RemoteIpAddress=0:0:0:0:0:0:0:1, SessionId=8abf9162-c667-4d69-9254-ea13eb8fac34]
-            true
-         */
         return ResponseEntity.ok().body(new GenericResponse("AuthSuccess for " + user.getUsername()));
     }
 }

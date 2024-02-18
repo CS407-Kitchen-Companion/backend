@@ -25,10 +25,10 @@
 | Method | Mapping        | Description                        | Model/Body/Params             | Auth | Status |
 |--------|----------------|------------------------------------|-------------------------------|------|--------|
 | POST   | `/new`         | Used in new user Creation          | See [new user](#new-user)     | N    | Active |
-| POST   | `/login`       | Used in new user Creation          | See [user login](#user-login) | N    | Active |
+| POST   | `/login`       | Used in user login                 | See [user login](#user-login) | N    | Active |
 | GET    | `/verify`      | Verify User email given token      | Params: uid, token            | N    | Later  |
 | GET    | `/all`         | Get information for all users      |                               | N    | Later  |
-| GET    | `/{id}/boards` | Get list of groups created by user |                               | N    | Later  |
+| GET    | `/{id}/groups` | Get list of groups created by user |                               | N    | Later  |
 | GET    | `/current`     | Get current user information       |                               | Y?   | Later  | 
 | DELETE | `/delete`      | Delete the current logged in user  |                               | Y    | Later  | 
 
@@ -85,8 +85,58 @@
 
 | Method | Mapping | Description                 | Model/Body/Params             | Auth | Status |
 |--------|---------|-----------------------------|-------------------------------|------|--------|
-| POST   | `/new`  | Used in new Recipe Creation | See [new recipe](#new-recipe) | N    | Active |
-|        |         |                             |                               |      |        |
+| POST   | `/new`  | Used in new Recipe Creation | See [new recipe](#new-recipe) | Y    | Active |
+| GET    | `/{id}` | Used to get a Recipie       | See [get recipe](#get-recipe) | N    | Active |
+
+## Recipe API Models
+
+### new recipe
+
+#### Request Body
+
+```json
+{
+  "title": "title 1",
+  "content": "content 1"
+}
+```
+
+#### Reply Body
+
+```json
+{
+  "id": 3,
+  "title": "title 1",
+  "content": "content 1",
+  "createdBy": 2,
+  "createdAt": "2024-02-18T23:09:02.770881Z",
+  "comments": [],
+  "updatedAt": "2024-02-18T23:09:02.770881Z",
+  "edited": false
+}
+```
+
+### get recipe
+
+#### Request Body
+
+N/A, use path:
+`/recipe/{id}`
+
+#### Reply Body
+
+```json
+{
+  "id": 3,
+  "title": "title 1",
+  "content": "content 1",
+  "createdBy": 2,
+  "createdAt": "2024-02-18T23:09:02.770881Z",
+  "comments": [],
+  "updatedAt": "2024-02-18T23:09:02.770881Z",
+  "edited": false
+}
+```
 
 # Anything further is not valid
 
