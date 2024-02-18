@@ -22,17 +22,17 @@
 
 ## User Public API
 
-| Method | Mapping        | Description                        | Model/Body/Params         | Auth | Status |
-|--------|----------------|------------------------------------|---------------------------|------|--------|
-| POST   | `/new`         | Used in new user Creation          | See [new user](#new-user) | N    | Active |
-| POST   | `/login`       | Used in new user Creation          | See [new user](#new-user) | N    | Active |
-| GET    | `/verify`      | Verify User email given token      | Params: uid, token        | N    | Later  |
-| GET    | `/all`         | Get information for all users      |                           | N    | Later  |
-| GET    | `/{id}/boards` | Get list of groups created by user |                           | N    | Later  |
-| GET    | `/current`     | Get current user information       |                           | Y?   | Later  | 
-| DELETE | `/delete`      | Delete the current logged in user  |                           | Y    | Later  | 
+| Method | Mapping        | Description                        | Model/Body/Params             | Auth | Status |
+|--------|----------------|------------------------------------|-------------------------------|------|--------|
+| POST   | `/new`         | Used in new user Creation          | See [new user](#new-user)     | N    | Active |
+| POST   | `/login`       | Used in new user Creation          | See [user login](#user-login) | N    | Active |
+| GET    | `/verify`      | Verify User email given token      | Params: uid, token            | N    | Later  |
+| GET    | `/all`         | Get information for all users      |                               | N    | Later  |
+| GET    | `/{id}/boards` | Get list of groups created by user |                               | N    | Later  |
+| GET    | `/current`     | Get current user information       |                               | Y?   | Later  | 
+| DELETE | `/delete`      | Delete the current logged in user  |                               | Y    | Later  | 
 
-## User Development API
+### User Development API
 
 | Method | Mapping     | Description                          | Model/Body/Params | Auth |
 |--------|-------------|--------------------------------------|-------------------|------|
