@@ -97,6 +97,7 @@ public class SecurityConfig {
         provider.setUserDetailsService(jwtUserDetailsService);
         return provider;
     }
+    // https://stackoverflow.com/questions/66764551/spring-boot-security-why-does-my-authenticationmanager-not-work
 
 //    @Bean
 //    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {

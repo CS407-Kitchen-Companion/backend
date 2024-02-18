@@ -93,9 +93,9 @@ public class UserController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody Map<String, String> payload) throws Exception {
 
-        System.out.println("auth1");
+//        System.out.println("auth1");
         authenticate(payload.get("username"), payload.get("password"));
-        System.out.println("auth2");
+//        System.out.println("auth2");
 
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(payload.get("username"));
@@ -108,15 +108,15 @@ public class UserController {
     private void authenticate(String username, String password) throws Exception {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            System.out.println("auth2a");
+//            System.out.println("auth2a");
         } catch (DisabledException e) {
-            System.out.println("auth3");
+//            System.out.println("auth3");
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
-            System.out.println("auth4");
+//            System.out.println("auth4");
             throw new Exception("INVALID_CREDENTIALS", e);
         } catch (Exception e) {
-            System.out.println("auth5 " + e);
+//            System.out.println("auth5 " + e);
             throw e;
         }
     }
