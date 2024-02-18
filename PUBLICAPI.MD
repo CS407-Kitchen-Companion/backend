@@ -83,9 +83,10 @@
 
 ## Recipe Public API
 
-| Method | Mapping | Description               | Model/Body/Params             | Auth | Status |
-|--------|---------|---------------------------|-------------------------------|------|--------|
-| POST   | `/new`  | Used in new user Creation | See [new recipe](#new-recipe) | N    | Active |
+| Method | Mapping | Description                 | Model/Body/Params             | Auth | Status |
+|--------|---------|-----------------------------|-------------------------------|------|--------|
+| POST   | `/new`  | Used in new Recipe Creation | See [new recipe](#new-recipe) | N    | Active |
+|        |         |                             |                               |      |        |
 
 # Anything further is not valid
 
