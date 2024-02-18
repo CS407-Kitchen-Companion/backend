@@ -85,7 +85,9 @@ public class Recipe {
     public void setContent(String content) {
         this.content = content;
     }
-
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
     public List<Long> getComments() {
         return comments;
     }
