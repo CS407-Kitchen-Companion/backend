@@ -8,10 +8,10 @@
 
 ## Table of Contents
 
-| Name         | Link                        | Description               |
-|--------------|-----------------------------|---------------------------|
-| User API     | [here](#User-Public-API)    | User Related Functions    |
-| Recipies API | [here](#Recipie-Public-API) | Recipie Related Functions |
+| Name        | Link                       | Description              |
+|-------------|----------------------------|--------------------------|
+| User API    | [here](#User-Public-API)   | User Related Functions   |
+| Recipes API | [here](#Recipe-Public-API) | Recipe Related Functions |
 
 ## API Endpoints
 
@@ -81,11 +81,11 @@
 }
 ```
 
-## Recipie Public API
+## Recipe Public API
 
-| Method | Mapping | Description               | Model/Body/Params               | Auth | Status |
-|--------|---------|---------------------------|---------------------------------|------|--------|
-| POST   | `/new`  | Used in new user Creation | See [new recipie](#new-recipie) | N    | Active |
+| Method | Mapping | Description               | Model/Body/Params             | Auth | Status |
+|--------|---------|---------------------------|-------------------------------|------|--------|
+| POST   | `/new`  | Used in new user Creation | See [new recipe](#new-recipe) | N    | Active |
 
 # Anything further is not valid
 
