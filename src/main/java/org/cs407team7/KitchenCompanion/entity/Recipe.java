@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "recipes")
@@ -46,6 +47,19 @@ public class Recipe {
     //    private boolean pinned = false;
     @ElementCollection
     private List<Long> comments;
+
+    @ElementCollection
+    private List<Long> ratings;
+
+    @ElementCollection
+    private Map<String, String> ingredients;
+//    private List<Long> ingredients;
+
+//    private Map<IngredientData, String> ingredients;
+
+    private Long ratingCount;
+
+    private Long calculatedRating;
 
     @LastModifiedDate
     private Instant updatedAt;
@@ -85,14 +99,48 @@ public class Recipe {
     public void setContent(String content) {
         this.content = content;
     }
+
     public void setCreatedBy(Long createdBy) {
         this.createdBy = createdBy;
     }
+
     public List<Long> getComments() {
         return comments;
     }
 
     public void setComments(List<Long> comments) {
         this.comments = comments;
+    }
+
+    public Long getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(Long ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+
+    public Long getCalculatedRating() {
+        return calculatedRating;
+    }
+
+    public void setCalculatedRating(Long calculatedRating) {
+        this.calculatedRating = calculatedRating;
+    }
+
+    public List<Long> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Long> ratings) {
+        this.ratings = ratings;
+    }
+
+    public Map<String, String> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(Map<String, String> ingredients) {
+        this.ingredients = ingredients;
     }
 }

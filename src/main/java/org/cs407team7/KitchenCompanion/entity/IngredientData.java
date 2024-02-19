@@ -29,13 +29,42 @@ public class IngredientData {
     @CreatedDate
     private Instant createdAt;
 
-    @Column(name = "is_edited")
-    private boolean isEdited = false;
-
 //    private Long editCount;
 
 //    private boolean pinned = false;
 
     @LastModifiedDate
     private Instant updatedAt;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }
