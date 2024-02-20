@@ -18,7 +18,7 @@
 
 | Name          | Link                                                           | Description                                           |
 |---------------|----------------------------------------------------------------|-------------------------------------------------------|
-| Dev Endpoint  | `https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/`   | Actual delpoyed/running SB Server                     |
+| Dev Endpoint  | `https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/`   | Actual deployed/running SB Server                     |
 | Mock Endpoint | `https://kitchencompanion.eastus.cloudapp.azure.com/api/mock/` | Python Django mock server (faster features, usually?) |
 
 ## User Public API
@@ -203,13 +203,15 @@ N/A, use path: `/recipe/{id}`
   "status": 200,
   "error": false,
   "data": {
-    "id": 3,
+    "id": 24,
     "title": "title 1",
     "content": "content 1",
     "createdBy": 2,
-    "createdAt": "2024-02-20T21:18:58.875501Z",
+    "createdAt": "2024-02-20T23:43:38.226555Z",
     "comments": [],
-    "ratings": [],
+    "ratings": [
+      2
+    ],
     "appliances": [
       "Knife",
       "Litteral_Kitchen"
@@ -223,12 +225,12 @@ N/A, use path: `/recipe/{id}`
       "i1": "p1",
       "i2": "p2"
     },
-    "ratingCount": null,
-    "calculatedRating": null,
+    "ratingCount": 1,
+    "calculatedRating": 5,
     "serves": 5,
     "time": 3600,
-    "calories": null,
-    "updatedAt": "2024-02-20T21:18:58.875501Z",
+    "calories": 105,
+    "updatedAt": "2024-02-20T23:44:21.954814Z",
     "edited": false
   }
 }
