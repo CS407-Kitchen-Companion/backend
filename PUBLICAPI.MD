@@ -214,7 +214,7 @@ N/A, use path: `/recipe/{id}`
     ],
     "appliances": [
       "Knife",
-      "Litteral_Kitchen"
+      "Literal_Kitchen"
     ],
     "tags": [
       "abc",
