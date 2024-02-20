@@ -1,8 +1,10 @@
 package org.cs407team7.KitchenCompanion.controller;
 
+import jakarta.validation.Valid;
 import net.minidev.json.JSONObject;
 import org.cs407team7.KitchenCompanion.entity.Recipe;
 import org.cs407team7.KitchenCompanion.entity.User;
+import org.cs407team7.KitchenCompanion.requestobject.RecipeRequest;
 import org.cs407team7.KitchenCompanion.responseobject.ErrorResponse;
 import org.cs407team7.KitchenCompanion.service.RecipeService;
 import org.cs407team7.KitchenCompanion.service.UserService;
@@ -29,7 +31,7 @@ public class RecipeController {
 
     @PostMapping(path = "/new")
     public ResponseEntity<Object> addRecipe(
-            @RequestBody Map<String, Object> payload
+            @RequestBody @Valid RecipeRequest payload
     ) {
         User user = userService.getAuthUser();
         if (user == null) {
@@ -37,27 +39,16 @@ public class RecipeController {
                     new ErrorResponse(401, "You must be logged in to create a new recipe."));
         }
         try {
-            String title = (String) payload.get("title");
-            String content = (String) payload.get("content");
-            Map<String, String> ingredients = (Map<String, String>) payload.get("ingredients");
-            if(ingredients == null){
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                        new ErrorResponse(500, "Add ingredients"));
-            }
-
             // Use the getAuthUser() in the future.
             Long createdBy = user.getId();
 
-            // I'll make a constructor with all minimally required fields soon
-            Recipe recipe = new Recipe();
-            recipe.setTitle(title);
-            recipe.setContent(content);
-            recipe.setCreatedBy(createdBy);
-            recipe.setIngredients(ingredients);
-            System.out.println("A");
+            // TODO: check non null values
+
+            Recipe recipe = new Recipe(payload.title, payload.content, createdBy, payload.ingredients,
+                    payload.time, payload.serves, payload.tags, payload.appliances);
+
             // Sure that works, ill change a few things to match this in the future
             Recipe savedRecipe = recipeService.addRecipe(recipe);
-            System.out.println("B");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(savedRecipe);
         } catch (Exception e) {

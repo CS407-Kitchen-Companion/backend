@@ -3,6 +3,7 @@ package org.cs407team7.KitchenCompanion.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.nimbusds.jose.crypto.impl.AAD;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -52,6 +53,16 @@ public class Recipe {
     @ElementCollection
     private List<Long> ratings;
 
+    // TODO: make entity with limited list not user supplied randomness
+    @ElementCollection
+    private List<String> appliances;
+
+//    @ElementCollection
+//    private List<String> steps;
+
+    // TODO: make entity with limited list not user supplied randomness
+    @ElementCollection
+    private List<String> tags;
     @ElementCollection
     private Map<String, String> ingredients;
 //    private List<Long> ingredients;
@@ -62,6 +73,10 @@ public class Recipe {
 
     private Long calculatedRating;
 
+    private Long serves;
+
+    private Long time;
+
     @LastModifiedDate
     private Instant updatedAt;
 
@@ -69,8 +84,24 @@ public class Recipe {
         comments = new ArrayList<>();
         ratings = new ArrayList<>();
         ingredients = new TreeMap<>();
+        appliances = new ArrayList<>();
+//        steps = new ArrayList<>();
+        tags = new ArrayList<>();
         ratingCount = 0L;
         calculatedRating = 0L;
+    }
+
+    public Recipe(String title, String content, Long createdBy, Map<String, String> ingredients,
+                  Long time, Long serves, List<String> tags, List<String> appliances) {
+        this();
+        this.title = title;
+        this.content = content;
+        this.createdBy = createdBy;
+        this.ingredients = ingredients;
+        this.time = time;
+        this.serves = serves;
+        this.tags = tags;
+        this.appliances = appliances;
     }
 
     public Long getId() {
@@ -158,4 +189,35 @@ public class Recipe {
         this.ingredients = ingredients;
     }
 
+    public Long getServes() {
+        return serves;
+    }
+
+    public void setServes(Long serves) {
+        this.serves = serves;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
+    public List<String> getAppliances() {
+        return appliances;
+    }
+
+    public void setAppliances(List<String> appliances) {
+        this.appliances = appliances;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
 }

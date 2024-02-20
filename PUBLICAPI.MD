@@ -100,6 +100,10 @@
 {
   "title": "title 1",
   "content": "content 1",
+  "serves": 5,
+  "time": 3600,
+  "tags": ["abc", "def", "tag1"],
+  "appliances": ["Knife", "Litteral_Kitchen"],
   "ingredients":
   {
     "i1":"p1",
@@ -112,20 +116,31 @@
 
 ```json
 {
-  "id": 1,
+  "id": 10,
   "title": "title 1",
   "content": "content 1",
   "createdBy": 2,
-  "createdAt": "2024-02-20T20:20:40.532543Z",
+  "createdAt": "2024-02-20T21:21:51.917808Z",
   "comments": [],
   "ratings": [],
+  "appliances": [
+    "Knife",
+    "Litteral_Kitchen"
+  ],
+  "tags": [
+    "abc",
+    "def",
+    "tag1"
+  ],
   "ingredients": {
     "i1": "p1",
     "i2": "p2"
   },
   "ratingCount": 0,
   "calculatedRating": 0,
-  "updatedAt": "2024-02-20T20:20:40.532543Z",
+  "serves": 5,
+  "time": 3600,
+  "updatedAt": "2024-02-20T21:21:51.917808Z",
   "edited": false
 }
 ```
@@ -141,20 +156,31 @@ N/A, use path:
 
 ```json
 {
-  "id": 1,
+  "id": 10,
   "title": "title 1",
   "content": "content 1",
   "createdBy": 2,
-  "createdAt": "2024-02-20T20:20:40.532543Z",
+  "createdAt": "2024-02-20T21:21:51.917808Z",
   "comments": [],
   "ratings": [],
+  "appliances": [
+    "Knife",
+    "Litteral_Kitchen"
+  ],
+  "tags": [
+    "abc",
+    "def",
+    "tag1"
+  ],
   "ingredients": {
     "i1": "p1",
     "i2": "p2"
   },
   "ratingCount": 0,
   "calculatedRating": 0,
-  "updatedAt": "2024-02-20T20:20:40.532543Z",
+  "serves": 5,
+  "time": 3600,
+  "updatedAt": "2024-02-20T21:21:51.917808Z",
   "edited": false
 }
 ```
