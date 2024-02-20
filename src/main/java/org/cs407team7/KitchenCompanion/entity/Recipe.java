@@ -77,6 +77,8 @@ public class Recipe {
 
     private Long time;
 
+    private Long calories;
+
     @LastModifiedDate
     private Instant updatedAt;
 
@@ -89,10 +91,11 @@ public class Recipe {
         tags = new ArrayList<>();
         ratingCount = 0L;
         calculatedRating = 0L;
+        calories = 0L;
     }
 
     public Recipe(String title, String content, Long createdBy, Map<String, String> ingredients,
-                  Long time, Long serves, List<String> tags, List<String> appliances) {
+                  Long time, Long serves, Long calories, List<String> tags, List<String> appliances) {
         this();
         this.title = title;
         this.content = content;
@@ -100,6 +103,7 @@ public class Recipe {
         this.ingredients = ingredients;
         this.time = time;
         this.serves = serves;
+        this.calories = calories;
         this.tags = tags;
         this.appliances = appliances;
     }
@@ -219,5 +223,13 @@ public class Recipe {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public Long getCalories() {
+        return calories;
+    }
+
+    public void setCalories(Long calories) {
+        this.calories = calories;
     }
 }

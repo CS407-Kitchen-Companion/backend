@@ -43,9 +43,12 @@ public class RecipeController {
             Long createdBy = user.getId();
 
             // TODO: check non null values
+            if (payload.calories == null) {
+                payload.calories = 99L;
+            }
 
             Recipe recipe = new Recipe(payload.title, payload.content, createdBy, payload.ingredients,
-                    payload.time, payload.serves, payload.tags, payload.appliances);
+                    payload.time, payload.serves, payload.calories, payload.tags, payload.appliances);
 
             // Sure that works, ill change a few things to match this in the future
             Recipe savedRecipe = recipeService.addRecipe(recipe);

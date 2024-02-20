@@ -17,6 +17,9 @@ public class RecipeRequest {
     public Long time;
     @NotNull
     public Long serves;
+
+    // Optional
+    public Long calories;
     @NotNull
     public List<String> tags;
     @NotNull

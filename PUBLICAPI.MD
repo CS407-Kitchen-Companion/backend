@@ -14,7 +14,6 @@
 | Recipes API | [Recipe API](#Recipe-Public-API) | Recipe Related Functions |
 | Ratings API | [Rating API](#Rating-Public-API) | Rating Related Functions |
 
-
 ## API Endpoints
 
 | Name          | Link                                                           | Description                                           |
@@ -96,18 +95,27 @@
 
 #### Request Body
 
+Calories optional value
+
 ```json
 {
   "title": "title 1",
   "content": "content 1",
   "serves": 5,
   "time": 3600,
-  "tags": ["abc", "def", "tag1"],
-  "appliances": ["Knife", "Litteral_Kitchen"],
-  "ingredients":
-  {
-    "i1":"p1",
-    "i2":"p2"
+  "calories": 105,
+  "tags": [
+    "abc",
+    "def",
+    "tag1"
+  ],
+  "appliances": [
+    "Knife",
+    "Litteral_Kitchen"
+  ],
+  "ingredients": {
+    "i1": "p1",
+    "i2": "p2"
   }
 }
 ```
@@ -116,11 +124,11 @@
 
 ```json
 {
-  "id": 10,
+  "id": 20,
   "title": "title 1",
   "content": "content 1",
   "createdBy": 2,
-  "createdAt": "2024-02-20T21:21:51.917808Z",
+  "createdAt": "2024-02-20T21:35:52.283781Z",
   "comments": [],
   "ratings": [],
   "appliances": [
@@ -140,7 +148,8 @@
   "calculatedRating": 0,
   "serves": 5,
   "time": 3600,
-  "updatedAt": "2024-02-20T21:21:51.917808Z",
+  "calories": 105,
+  "updatedAt": "2024-02-20T21:35:52.283781Z",
   "edited": false
 }
 ```
@@ -156,11 +165,11 @@ N/A, use path:
 
 ```json
 {
-  "id": 10,
+  "id": 20,
   "title": "title 1",
   "content": "content 1",
   "createdBy": 2,
-  "createdAt": "2024-02-20T21:21:51.917808Z",
+  "createdAt": "2024-02-20T21:35:52.283781Z",
   "comments": [],
   "ratings": [],
   "appliances": [
@@ -180,11 +189,14 @@ N/A, use path:
   "calculatedRating": 0,
   "serves": 5,
   "time": 3600,
-  "updatedAt": "2024-02-20T21:21:51.917808Z",
+  "calories": 105,
+  "updatedAt": "2024-02-20T21:35:52.283781Z",
   "edited": false
 }
 ```
+
 ## Rating Public API
+
 | Method | Mapping | Description                 | Model/Body/Params             | Auth | Status |
 |--------|---------|-----------------------------|-------------------------------|------|--------|
 | POST   | `/new`  | Used in new Rating Creation | See [new rating](#new-rating) | Y    | Active |
@@ -230,16 +242,6 @@ N/A, use path: `/rating/{id}`
   "rating": 5
 }
 ```
-
-
-
-
-
-
-
-
-
-
 
 # Anything further is not valid
 

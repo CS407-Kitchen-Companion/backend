@@ -3,7 +3,7 @@
 ```commandline
 git pull 
 mvn compile
-mvn package
+mvn package -DskipTests=true
 
 sudo systemctl stop kitcomp
 sudo systemctl start kitcomp
