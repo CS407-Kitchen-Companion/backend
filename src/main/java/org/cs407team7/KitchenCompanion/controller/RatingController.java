@@ -31,12 +31,12 @@ public class RatingController {
         User user = userService.getAuthUser();
         Long recipeId = ((Integer) payload.get("recipe_id")).longValue();
         Long rating = ((Integer) payload.get("rating")).longValue();
-//        if (user == null) {
-//            ErrorResponse errorResponse = new ErrorResponse(401, "You must be logged in to create a new rating.");
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Rating());
-//        }
+        if (user == null) {
+            ErrorResponse errorResponse = new ErrorResponse(401, "You must be logged in to create a new rating.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Rating());
+        }
 
-        Rating createdRating = ratingService.addRating(recipeId,1L,rating);
+        Rating createdRating = ratingService.addRating(recipeId,user.getId(),rating);
         return new ResponseEntity<>(createdRating, HttpStatus.CREATED);
     }
 

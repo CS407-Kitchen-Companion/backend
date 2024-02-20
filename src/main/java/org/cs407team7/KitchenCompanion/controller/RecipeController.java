@@ -32,10 +32,10 @@ public class RecipeController {
             @RequestBody Map<String, Object> payload
     ) {
         User user = userService.getAuthUser();
-//        if (user == null) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-//                    new ErrorResponse(401, "You must be logged in to create a new recipe."));
-//        }
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    new ErrorResponse(401, "You must be logged in to create a new recipe."));
+        }
         try {
             String title = (String) payload.get("title");
             String content = (String) payload.get("content");
@@ -46,7 +46,7 @@ public class RecipeController {
             }
 
             // Use the getAuthUser() in the future.
-            Long createdBy = 1L;
+            Long createdBy = user.getId();
 
             // I'll make a constructor with all minimally required fields soon
             Recipe recipe = new Recipe();
