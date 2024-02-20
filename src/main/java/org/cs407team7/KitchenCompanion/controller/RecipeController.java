@@ -54,8 +54,10 @@ public class RecipeController {
             recipe.setContent(content);
             recipe.setCreatedBy(createdBy);
             recipe.setIngredients(ingredients);
+            System.out.println("A");
             // Sure that works, ill change a few things to match this in the future
             Recipe savedRecipe = recipeService.addRecipe(recipe);
+            System.out.println("B");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(savedRecipe);
         } catch (Exception e) {

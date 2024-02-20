@@ -8,10 +8,12 @@
 
 ## Table of Contents
 
-| Name        | Link                       | Description              |
-|-------------|----------------------------|--------------------------|
-| User API    | [here](#User-Public-API)   | User Related Functions   |
-| Recipes API | [here](#Recipe-Public-API) | Recipe Related Functions |
+| Name        | Link                             | Description              |
+|-------------|----------------------------------|--------------------------|
+| User API    | [User API](#User-Public-API)     | User Related Functions   |
+| Recipes API | [Recipe API](#Recipe-Public-API) | Recipe Related Functions |
+| Ratings API | [Rating API](#Rating-Public-API) | Rating Related Functions |
+
 
 ## API Endpoints
 
@@ -97,7 +99,12 @@
 ```json
 {
   "title": "title 1",
-  "content": "content 1"
+  "content": "content 1",
+  "ingredients":
+  {
+    "i1":"p1",
+    "i2":"p2"
+  }
 }
 ```
 
@@ -105,13 +112,20 @@
 
 ```json
 {
-  "id": 3,
+  "id": 1,
   "title": "title 1",
   "content": "content 1",
   "createdBy": 2,
-  "createdAt": "2024-02-18T23:09:02.770881Z",
+  "createdAt": "2024-02-20T20:20:40.532543Z",
   "comments": [],
-  "updatedAt": "2024-02-18T23:09:02.770881Z",
+  "ratings": [],
+  "ingredients": {
+    "i1": "p1",
+    "i2": "p2"
+  },
+  "ratingCount": 0,
+  "calculatedRating": 0,
+  "updatedAt": "2024-02-20T20:20:40.532543Z",
   "edited": false
 }
 ```
@@ -127,16 +141,79 @@ N/A, use path:
 
 ```json
 {
-  "id": 3,
+  "id": 1,
   "title": "title 1",
   "content": "content 1",
   "createdBy": 2,
-  "createdAt": "2024-02-18T23:09:02.770881Z",
+  "createdAt": "2024-02-20T20:20:40.532543Z",
   "comments": [],
-  "updatedAt": "2024-02-18T23:09:02.770881Z",
+  "ratings": [],
+  "ingredients": {
+    "i1": "p1",
+    "i2": "p2"
+  },
+  "ratingCount": 0,
+  "calculatedRating": 0,
+  "updatedAt": "2024-02-20T20:20:40.532543Z",
   "edited": false
 }
 ```
+## Rating Public API
+| Method | Mapping | Description                 | Model/Body/Params             | Auth | Status |
+|--------|---------|-----------------------------|-------------------------------|------|--------|
+| POST   | `/new`  | Used in new Rating Creation | See [new rating](#new-rating) | Y    | Active |
+| GET    | `/{id}` | Used to get a Rating        | See [get rating](#get-rating) | N    | Active |
+
+## Rating API Models
+
+### new rating
+
+#### Request Body
+
+```json
+{
+  "recipe_id": 1,
+  "rating": 5
+}
+```
+
+#### Response Body
+
+```json
+{
+  "id": 1,
+  "recipe": 1,
+  "createdBy": 2,
+  "rating": 5
+}
+```
+
+### get rating
+
+#### Request Body
+
+N/A, use path: `/rating/{id}`
+
+#### Response Body
+
+```json
+{
+  "id": 1,
+  "recipe": 1,
+  "createdBy": 2,
+  "rating": 5
+}
+```
+
+
+
+
+
+
+
+
+
+
 
 # Anything further is not valid
 

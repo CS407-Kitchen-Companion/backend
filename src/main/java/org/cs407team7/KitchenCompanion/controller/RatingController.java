@@ -3,6 +3,7 @@ package org.cs407team7.KitchenCompanion.controller;
 import org.cs407team7.KitchenCompanion.entity.Rating;
 import org.cs407team7.KitchenCompanion.entity.Recipe;
 import org.cs407team7.KitchenCompanion.entity.User;
+import org.cs407team7.KitchenCompanion.responseobject.GenericResponse;
 import org.cs407team7.KitchenCompanion.service.RatingService;
 import org.cs407team7.KitchenCompanion.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import org.cs407team7.KitchenCompanion.responseobject.ErrorResponse;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/ratings")
+@RequestMapping("/rating")
 public class RatingController {
 
     @Autowired
@@ -27,19 +28,23 @@ public class RatingController {
     }
 
     @PostMapping
-    public ResponseEntity<Rating> addRating(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Object> addRating(@RequestBody Map<String, Object> payload) {
         User user = userService.getAuthUser();
-        Long recipeId = ((Integer) payload.get("recipe_id")).longValue();
-        Long rating = ((Integer) payload.get("rating")).longValue();
-        if (user == null) {
-            ErrorResponse errorResponse = new ErrorResponse(401, "You must be logged in to create a new rating.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Rating());
+        try {
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new ErrorResponse(401, "You must be logged in to create a new rating."));
+            }
+
+            Long recipeId = ((Integer) payload.get("recipe_id")).longValue();
+            Long rating = ((Integer) payload.get("rating")).longValue();
+
+            Rating createdRating = ratingService.addRating(recipeId, user.getId(), rating);
+            return new ResponseEntity<>(createdRating, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(new ErrorResponse(400, e.getMessage()));
         }
-
-        Rating createdRating = ratingService.addRating(recipeId,user.getId(),rating);
-        return new ResponseEntity<>(createdRating, HttpStatus.CREATED);
     }
-
 
 
     @GetMapping("/{id}")

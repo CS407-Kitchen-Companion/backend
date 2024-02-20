@@ -12,22 +12,31 @@ public class RatingService {
 
     private final RatingRepository ratingRepository;
     private final RecipeRepository recipeRepository;
+    private final RecipeService recipeService;
 
     @Autowired
-    public RatingService(RatingRepository ratingRepository, RecipeRepository recipeRepository) {
+    public RatingService(RatingRepository ratingRepository, RecipeRepository recipeRepository, RecipeService recipeService) {
         this.ratingRepository = ratingRepository;
         this.recipeRepository = recipeRepository;
+        this.recipeService = recipeService;
     }
 
     public Rating addRating(Long recipeId, Long createdBy, Long ratingValue) {
-        Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new IllegalArgumentException("Recipe with id " + recipeId + " not found"));
+        Recipe recipe = recipeService.getRecipeById(recipeId);
+        ratingRepository.findByCreatedByAndRecipe(createdBy, recipeId)
+                .ifPresent(f -> {
+                    throw new IllegalArgumentException("Cannot make multiple ratings on a single recipe");
+                });
         Rating rating = new Rating();
         rating.setRecipe(recipe);
         rating.setCreatedBy(createdBy);
         rating.setRating(ratingValue);
         System.out.println(rating);
-        return ratingRepository.save(rating);
+
+        rating = ratingRepository.save(rating);
+        recipe.addRating(rating);
+        recipeRepository.save(recipe);
+        return rating;
     }
 
     public Rating getRatingById(Long id) {

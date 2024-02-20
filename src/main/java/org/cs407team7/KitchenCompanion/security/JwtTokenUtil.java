@@ -22,10 +22,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JwtTokenUtil implements Serializable {
 
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    // 14 days instead of 5 hours
+    public static final long JWT_TOKEN_VALIDITY = 14 * 24 * 60 * 60;
 
 //    @Value("${jwt.secret}")
-    private String secret = "hardcodethatshouldbeinenvvar" +
+    private final String secret = "hardcodethatshouldbeinenvvar" +
         "hubgerhlugbeuigrt82hufbdwlkuyrg32879rgilwuygf8wu7gr2lui3yebliuwebfgi8u7gti2u3rbflsidubfgkslueygt8i4uhdbfu87g2";
 
     //retrieve username from jwt token

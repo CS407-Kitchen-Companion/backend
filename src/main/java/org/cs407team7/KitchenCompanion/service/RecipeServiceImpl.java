@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -26,7 +27,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public Recipe getRecipeById(Long id) {
         Optional<Recipe> optionalRecipe = recipeRepository.findById(id);
-        return optionalRecipe.orElse(null);
+        return optionalRecipe.orElseThrow(IllegalArgumentException::new);
     }
 
     @Override

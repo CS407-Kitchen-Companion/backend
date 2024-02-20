@@ -11,8 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 @Table(name = "recipes")
@@ -49,9 +48,9 @@ public class Recipe {
     private List<Long> comments;
 
 
-
-    @OneToMany(mappedBy = "recipe")
-    private List<Rating> ratings;
+    //    @OneToMany(mappedBy = "recipe")
+    @ElementCollection
+    private List<Long> ratings;
 
     @ElementCollection
     private Map<String, String> ingredients;
@@ -65,6 +64,14 @@ public class Recipe {
 
     @LastModifiedDate
     private Instant updatedAt;
+
+    public Recipe() {
+        comments = new ArrayList<>();
+        ratings = new ArrayList<>();
+        ingredients = new TreeMap<>();
+        ratingCount = 0L;
+        calculatedRating = 0L;
+    }
 
     public Long getId() {
         return id;
@@ -118,25 +125,31 @@ public class Recipe {
         return ratingCount;
     }
 
-    public void setRatingCount(Long ratingCount) {
-        this.ratingCount = ratingCount;
-    }
-
     public Long getCalculatedRating() {
         return calculatedRating;
     }
 
-    public void setCalculatedRating(Long calculatedRating) {
-        this.calculatedRating = calculatedRating;
-    }
-
-    public List<Rating> getRatings() {
+    public List<Long> getRatings() {
         return ratings;
     }
 
-    public void setRatings(List<Rating> ratings) {
+    public void setRatings(List<Long> ratings) {
         this.ratings = ratings;
     }
+
+    public void addRating(Rating rating) {
+        if (!rating.getRecipe().equals(getId())) {
+            return; //invalid
+        }
+        ratingCount++;
+        ratings.add(rating.getId());
+        calculatedRating += rating.getRating();
+    }
+
+    public void removeRating(Rating rating) {
+
+    }
+
     public Map<String, String> getIngredients() {
         return ingredients;
     }
