@@ -1,13 +1,12 @@
 package org.cs407team7.KitchenCompanion.requestobject;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.Map;
 
-public class RecipeRequest {
+public class NewRecipeRequest {
 
     @NotBlank
     public String title;

@@ -1,10 +1,9 @@
 package org.cs407team7.KitchenCompanion.controller;
 
 import jakarta.validation.Valid;
-import net.minidev.json.JSONObject;
 import org.cs407team7.KitchenCompanion.entity.Recipe;
 import org.cs407team7.KitchenCompanion.entity.User;
-import org.cs407team7.KitchenCompanion.requestobject.RecipeRequest;
+import org.cs407team7.KitchenCompanion.requestobject.NewRecipeRequest;
 import org.cs407team7.KitchenCompanion.responseobject.ErrorResponse;
 import org.cs407team7.KitchenCompanion.service.RecipeService;
 import org.cs407team7.KitchenCompanion.service.UserService;
@@ -12,9 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/recipe")
@@ -31,7 +27,7 @@ public class RecipeController {
 
     @PostMapping(path = "/new")
     public ResponseEntity<Object> addRecipe(
-            @RequestBody @Valid RecipeRequest payload
+            @RequestBody @Valid NewRecipeRequest payload
     ) {
         User user = userService.getAuthUser();
         if (user == null) {
