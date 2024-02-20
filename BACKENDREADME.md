@@ -1,5 +1,15 @@
 ## Need help with azure stuff? Your in the right place
+Suggested Flow
+```commandline
+cd /kitchencompanion/backend
+sudo systemctl stop kitcomp
+mvn clean
+mvn package -DskipTests=true
+sudo systemctl start kitcomp
+```
 
+
+All Commands
 ```commandline
 git pull 
 mvn compile
