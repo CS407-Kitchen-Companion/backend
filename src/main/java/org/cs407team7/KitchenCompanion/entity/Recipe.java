@@ -48,8 +48,10 @@ public class Recipe {
     @ElementCollection
     private List<Long> comments;
 
-    @ElementCollection
-    private List<Long> ratings;
+
+
+    @OneToMany(mappedBy = "recipe")
+    private List<Rating> ratings;
 
     @ElementCollection
     private Map<String, String> ingredients;
@@ -128,14 +130,13 @@ public class Recipe {
         this.calculatedRating = calculatedRating;
     }
 
-    public List<Long> getRatings() {
+    public List<Rating> getRatings() {
         return ratings;
     }
 
-    public void setRatings(List<Long> ratings) {
+    public void setRatings(List<Rating> ratings) {
         this.ratings = ratings;
     }
-
     public Map<String, String> getIngredients() {
         return ingredients;
     }
@@ -143,4 +144,5 @@ public class Recipe {
     public void setIngredients(Map<String, String> ingredients) {
         this.ingredients = ingredients;
     }
+
 }

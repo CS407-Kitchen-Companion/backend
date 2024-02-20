@@ -17,6 +17,12 @@ public class Rating {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "recipe_id")
+    private Recipe recipe;
+
+
+
     @CreatedBy
     private Long createdBy;
 
@@ -40,4 +46,16 @@ public class Rating {
         // example: 5 star, half star, or out of 10, etc
         this.rating = rating;
     }
+
+    public Recipe getRecipe() {
+        return recipe;
+    }
+
+    public void setRecipe(Recipe recipe) {
+        this.recipe = recipe;
+    }
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
 }
