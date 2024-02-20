@@ -27,8 +27,10 @@ public class RatingController {
         this.ratingService = ratingService;
     }
 
-    @PostMapping
-    public ResponseEntity<Object> addRating(@RequestBody Map<String, Object> payload) {
+    @PostMapping("/new")
+    public ResponseEntity<?> addRating(
+            @RequestBody Map<String, Object> payload
+    ) {
         User user = userService.getAuthUser();
         try {
             if (user == null) {
@@ -40,7 +42,7 @@ public class RatingController {
             Long rating = ((Integer) payload.get("rating")).longValue();
 
             Rating createdRating = ratingService.addRating(recipeId, user.getId(), rating);
-            return new ResponseEntity<>(createdRating, HttpStatus.CREATED);
+            return new ResponseEntity<>(new GenericResponse(createdRating), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(new ErrorResponse(400, e.getMessage()));
         }
@@ -48,9 +50,9 @@ public class RatingController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<Rating> getRatingById(@PathVariable Long id) {
+    public ResponseEntity<?> getRatingById(@PathVariable Long id) {
         Rating rating = ratingService.getRatingById(id);
-        return new ResponseEntity<>(rating, HttpStatus.OK);
+        return new ResponseEntity<>(new GenericResponse(rating), HttpStatus.OK);
     }
 
     // Add more endpoints as needed

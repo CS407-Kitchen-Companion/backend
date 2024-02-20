@@ -1,29 +1,46 @@
 package org.cs407team7.KitchenCompanion.responseobject;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 public class GenericResponse extends Response {
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public Object data;
-
     public GenericResponse(String response) {
+        this();
         this.response = response;
-        this.status = 200; // Default Value
-        this.error = false;
     }
 
     public GenericResponse(int status, String response) {
+        this();
         this.response = response;
         this.status = status;
-        this.error = false;
+    }
+
+    public GenericResponse(String response, Object data) {
+        this();
+        this.response = response;
+        this.data = data;
     }
 
     public GenericResponse(int status, String response, Object data) {
+        this();
         this.response = response;
         this.status = status;
         this.data = data;
-        this.error = false;
     }
 
+    public GenericResponse(Object data) {
+        this();
+        this.response = "See Data.";
+        this.data = data;
+    }
+
+    public GenericResponse(int status, Object data) {
+        this();
+        this.status = status;
+        this.response = "See Data.";
+        this.data = data;
+    }
+
+    public GenericResponse() {
+        this.status = 200; // Default Value
+        this.error = false;
+    }
 }

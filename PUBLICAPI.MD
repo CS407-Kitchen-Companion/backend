@@ -23,15 +23,23 @@
 
 ## User Public API
 
-| Method | Mapping        | Description                        | Model/Body/Params             | Auth | Status |
-|--------|----------------|------------------------------------|-------------------------------|------|--------|
-| POST   | `/new`         | Used in new user Creation          | See [new user](#new-user)     | N    | Active |
-| POST   | `/login`       | Used in user login                 | See [user login](#user-login) | N    | Active |
-| GET    | `/verify`      | Verify User email given token      | Params: uid, token            | N    | Later  |
-| GET    | `/all`         | Get information for all users      |                               | N    | Later  |
-| GET    | `/{id}/groups` | Get list of groups created by user |                               | N    | Later  |
-| GET    | `/current`     | Get current user information       |                               | Y?   | Later  | 
-| DELETE | `/delete`      | Delete the current logged in user  |                               | Y    | Later  | 
+| Method | Mapping          | Description                        | Model/Body/Params                      | Auth | Status |
+|--------|------------------|------------------------------------|----------------------------------------|------|--------|
+| POST   | `/new`           | Used in new user Creation          | See [new user](#new-user)              | N    | Active |
+| POST   | `/login`         | Used in user login                 | See [user login](#user-login)          | N    | Active |
+| GET    | `/{id}`          | Get User Data                      | Params: uid, See [get user](#get-user) | N    | Active |
+| GET    | `/{id}/username` | Get User Username Only             | Params: uid                            | N    | Active |
+| GET    | `/verify`        | Verify User email given token      | Params: uid, token                     | N    | Later  |
+| GET    | `/all`           | Get information for all users      |                                        | N    | Later  |
+| GET    | `/{id}/groups`   | Get list of groups created by user |                                        | N    | Later  |
+| GET    | `/current`       | Get current user information       |                                        | Y?   | Later  | 
+| DELETE | `/delete`        | Delete the current logged in user  |                                        | Y    | Later  | 
+
+### User Info API (Other)
+
+| Method | Mapping          | Description            | Model/Body/Params | Auth | Status |
+|--------|------------------|------------------------|-------------------|------|--------|
+| GET    | `/{id}/username` | Get User Username Only | Params: uid       | N    | Active |
 
 ### User Development API
 
@@ -82,6 +90,28 @@
 }
 ```
 
+### get user
+
+#### Request Body
+
+N/A, use path: `/user/{id}`
+
+#### Response Body
+
+```json
+{
+  "response": "See Data.",
+  "status": 200,
+  "error": false,
+  "data": {
+    "id": 1,
+    "username": "test_1",
+    "email": "test@email",
+    "createdAt": "2024-02-12T21:05:41.846385Z"
+  }
+}
+```
+
 ## Recipe Public API
 
 | Method | Mapping | Description                 | Model/Body/Params             | Auth | Status |
@@ -124,33 +154,38 @@ Calories optional value
 
 ```json
 {
-  "id": 20,
-  "title": "title 1",
-  "content": "content 1",
-  "createdBy": 2,
-  "createdAt": "2024-02-20T21:35:52.283781Z",
-  "comments": [],
-  "ratings": [],
-  "appliances": [
-    "Knife",
-    "Litteral_Kitchen"
-  ],
-  "tags": [
-    "abc",
-    "def",
-    "tag1"
-  ],
-  "ingredients": {
-    "i1": "p1",
-    "i2": "p2"
-  },
-  "ratingCount": 0,
-  "calculatedRating": 0,
-  "serves": 5,
-  "time": 3600,
-  "calories": 105,
-  "updatedAt": "2024-02-20T21:35:52.283781Z",
-  "edited": false
+  "response": "See Data.",
+  "status": 200,
+  "error": false,
+  "data": {
+    "id": 3,
+    "title": "title 1",
+    "content": "content 1",
+    "createdBy": 2,
+    "createdAt": "2024-02-20T21:18:58.875501Z",
+    "comments": [],
+    "ratings": [],
+    "appliances": [
+      "Knife",
+      "Litteral_Kitchen"
+    ],
+    "tags": [
+      "abc",
+      "def",
+      "tag1"
+    ],
+    "ingredients": {
+      "i1": "p1",
+      "i2": "p2"
+    },
+    "ratingCount": null,
+    "calculatedRating": null,
+    "serves": 5,
+    "time": 3600,
+    "calories": null,
+    "updatedAt": "2024-02-20T21:18:58.875501Z",
+    "edited": false
+  }
 }
 ```
 
@@ -158,40 +193,44 @@ Calories optional value
 
 #### Request Body
 
-N/A, use path:
-`/recipe/{id}`
+N/A, use path: `/recipe/{id}`
 
 #### Response Body
 
 ```json
 {
-  "id": 20,
-  "title": "title 1",
-  "content": "content 1",
-  "createdBy": 2,
-  "createdAt": "2024-02-20T21:35:52.283781Z",
-  "comments": [],
-  "ratings": [],
-  "appliances": [
-    "Knife",
-    "Litteral_Kitchen"
-  ],
-  "tags": [
-    "abc",
-    "def",
-    "tag1"
-  ],
-  "ingredients": {
-    "i1": "p1",
-    "i2": "p2"
-  },
-  "ratingCount": 0,
-  "calculatedRating": 0,
-  "serves": 5,
-  "time": 3600,
-  "calories": 105,
-  "updatedAt": "2024-02-20T21:35:52.283781Z",
-  "edited": false
+  "response": "See Data.",
+  "status": 200,
+  "error": false,
+  "data": {
+    "id": 3,
+    "title": "title 1",
+    "content": "content 1",
+    "createdBy": 2,
+    "createdAt": "2024-02-20T21:18:58.875501Z",
+    "comments": [],
+    "ratings": [],
+    "appliances": [
+      "Knife",
+      "Litteral_Kitchen"
+    ],
+    "tags": [
+      "abc",
+      "def",
+      "tag1"
+    ],
+    "ingredients": {
+      "i1": "p1",
+      "i2": "p2"
+    },
+    "ratingCount": null,
+    "calculatedRating": null,
+    "serves": 5,
+    "time": 3600,
+    "calories": null,
+    "updatedAt": "2024-02-20T21:18:58.875501Z",
+    "edited": false
+  }
 }
 ```
 
@@ -219,10 +258,15 @@ N/A, use path:
 
 ```json
 {
-  "id": 1,
-  "recipe": 1,
-  "createdBy": 2,
-  "rating": 5
+  "response": "See Data.",
+  "status": 201,
+  "error": false,
+  "data": {
+    "id": 1,
+    "recipe": 1,
+    "createdBy": 2,
+    "rating": 5
+  }
 }
 ```
 
@@ -236,10 +280,15 @@ N/A, use path: `/rating/{id}`
 
 ```json
 {
-  "id": 1,
-  "recipe": 1,
-  "createdBy": 2,
-  "rating": 5
+  "response": "See Data.",
+  "status": 200,
+  "error": false,
+  "data": {
+    "id": 1,
+    "recipe": 1,
+    "createdBy": 2,
+    "rating": 5
+  }
 }
 ```
 

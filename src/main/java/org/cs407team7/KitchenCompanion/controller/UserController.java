@@ -5,6 +5,7 @@ import org.cs407team7.KitchenCompanion.entity.User;
 import org.cs407team7.KitchenCompanion.repository.UserRepository;
 import org.cs407team7.KitchenCompanion.responseobject.ErrorResponse;
 import org.cs407team7.KitchenCompanion.responseobject.GenericResponse;
+import org.cs407team7.KitchenCompanion.responseobject.PublicUserDataResponse;
 import org.cs407team7.KitchenCompanion.security.JwtResponse;
 import org.cs407team7.KitchenCompanion.security.JwtTokenUtil;
 import org.cs407team7.KitchenCompanion.security.JwtUserDetailsService;
@@ -26,13 +27,6 @@ import java.util.Map;
 @RestController
 @RequestMapping(path = "/user")
 public class UserController {
-//    @PostMapping("/login")
-//    public ResponseEntity<String> authenticateUser(@RequestBody Login login) {
-//        Authentication authentication = authenticationManager
-//                .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        return new ResponseEntity<>("User login successfully!...", HttpStatus.OK);
-//    }
 
     @Autowired
     UserRepository userRepository;
@@ -79,16 +73,29 @@ public class UserController {
         return ResponseEntity.status(201).body(new GenericResponse("Please Verify Email"));
     }
 
-    private String generateRandomString(int length) {
-        String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890123456789";
-        StringBuilder rand = new StringBuilder();
-        SecureRandom secureRandom = new SecureRandom();
-        for (int i = 0; i < length; i++) {
-            rand.append(str.charAt(secureRandom.nextInt(str.length())));
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getUser(
+            @PathVariable Long id
+    ) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body(new ErrorResponse(404, "A user with that Id could not found"));
         }
-        return rand.toString();
+        PublicUserDataResponse preparedData = new PublicUserDataResponse(user.getId(), user.getUsername(),
+                user.getEmail(), user.getCreatedAt());
+        return ResponseEntity.ok(new GenericResponse(preparedData));
     }
 
+    @RequestMapping(value = "/{id}/username", method = RequestMethod.GET)
+    public ResponseEntity<?> getUsername(
+            @PathVariable Long id
+    ) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body(new ErrorResponse(404, "A user with that Id could not found"));
+        }
+        return ResponseEntity.ok(new GenericResponse(user.getUsername()));
+    }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody Map<String, String> payload) throws Exception {
@@ -136,4 +143,15 @@ public class UserController {
         System.out.println(auth.isAuthenticated()); // is authenticated?
         return ResponseEntity.ok().body(new GenericResponse("AuthSuccess for " + user.getUsername()));
     }
+
+    private String generateRandomString(int length) {
+        String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890123456789";
+        StringBuilder rand = new StringBuilder();
+        SecureRandom secureRandom = new SecureRandom();
+        for (int i = 0; i < length; i++) {
+            rand.append(str.charAt(secureRandom.nextInt(str.length())));
+        }
+        return rand.toString();
+    }
+
 }

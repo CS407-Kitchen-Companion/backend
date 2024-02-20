@@ -5,6 +5,7 @@ import org.cs407team7.KitchenCompanion.entity.Recipe;
 import org.cs407team7.KitchenCompanion.entity.User;
 import org.cs407team7.KitchenCompanion.requestobject.NewRecipeRequest;
 import org.cs407team7.KitchenCompanion.responseobject.ErrorResponse;
+import org.cs407team7.KitchenCompanion.responseobject.GenericResponse;
 import org.cs407team7.KitchenCompanion.service.RecipeService;
 import org.cs407team7.KitchenCompanion.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class RecipeController {
             // Sure that works, ill change a few things to match this in the future
             Recipe savedRecipe = recipeService.addRecipe(recipe);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedRecipe);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(savedRecipe));
         } catch (Exception e) {
             System.out.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
@@ -63,7 +64,7 @@ public class RecipeController {
         try {
             Recipe recipe = recipeService.getRecipeById(id);
             if (recipe != null) {
-                return ResponseEntity.ok(recipe);
+                return ResponseEntity.ok(new GenericResponse(201, recipe));
             } else {
                 return ResponseEntity.notFound().build();
             }

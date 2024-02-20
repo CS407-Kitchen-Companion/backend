@@ -6,6 +6,8 @@ abstract class Response {
 
     boolean error;
 
+    Object data;
+
     public String getResponse() {
         return response;
     }
@@ -16,5 +18,9 @@ abstract class Response {
 
     public boolean isError() {
         return error;
+    }
+
+    public Object getData() {
+        return data;
     }
 }
