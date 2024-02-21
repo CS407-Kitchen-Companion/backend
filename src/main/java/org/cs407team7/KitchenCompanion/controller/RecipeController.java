@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/recipe")
+@CrossOrigin(origins = "http://localhost:3000/")
 public class RecipeController {
     private final RecipeService recipeService;
 
@@ -89,4 +90,22 @@ public class RecipeController {
 
         return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(recipes));
     }
+
+    @GetMapping(path = "/{id}/rating")
+    public ResponseEntity<Object> getRecipeRating(@PathVariable Long id) {
+        try {
+            Recipe recipe = recipeService.getRecipeById(id);
+            if (recipe != null) {
+                Long calculatedRating = recipe.getCalculatedRating();
+                return ResponseEntity.ok(new GenericResponse(200, calculatedRating));
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(500, "Internal Server Error"));
+        }
+    }
+
+
 }
