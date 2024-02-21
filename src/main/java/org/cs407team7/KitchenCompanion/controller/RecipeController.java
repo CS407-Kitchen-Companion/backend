@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/recipe")
 public class RecipeController {
@@ -74,5 +76,12 @@ public class RecipeController {
         }
     }
 
-
+    @GetMapping(path = "/search")
+    public ResponseEntity<GenericResponse> getRecipesByTag(@RequestParam String tag) {
+        List<Recipe> recipes = recipeService.getRecipesByTag(tag);
+        if (recipes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GenericResponse(404, "You must specify tag"));
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(recipes));
+    }
 }
