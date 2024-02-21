@@ -77,11 +77,16 @@ public class RecipeController {
     }
 
     @GetMapping(path = "/search")
-    public ResponseEntity<GenericResponse> getRecipesByTag(@RequestParam String tag) {
-        List<Recipe> recipes = recipeService.getRecipesByTag(tag);
-        if (recipes.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GenericResponse(404, "You must specify tag"));
+    public ResponseEntity<GenericResponse> getRecipesByTags(@RequestParam List<String> tags) {
+        if (tags.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericResponse(400, "You must specify at least one tag"));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(recipes));
+
+        List<Recipe> recipes = recipeService.getRecipesByAllTags(tags);
+        if (recipes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GenericResponse(404, "No recipes found with the specified tags"));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(recipes));
     }
 }

@@ -297,13 +297,13 @@ N/A, use path: `/rating/{id}`
 
 | Method | Mapping              | Description                 | Model/Body/Params             | Auth | Status |
 |--------|----------------------|-----------------------------|-------------------------------|------|--------|
-| GET    | `recipe/search?tag=""` | Used to search for a recipe | See [get search](#get-search) | N    | Active |
+| GET    | `/recipe/search?tags=&tags=` | Used to search for a recipe | See [get search](#get-search) | N    | Active |
 
 ### get search
 
 #### Request Body
 
-N/A, use path: `/recipe/search?tag=`
+N/A, use path: `/recipe/search?tags=abc`
 
 #### Response Body
 

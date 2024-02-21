@@ -44,7 +44,9 @@ public class RecipeServiceImpl implements RecipeService {
     public void deleteRecipe(Long id) {
     }
 
-    public List<Recipe> getRecipesByTag(String tag) {
-        return recipeRepository.findByTagsContaining(tag);
+    @Override
+    public List<Recipe> getRecipesByAllTags(List<String> tags) {
+        Long tagCount = Long.valueOf(tags.size());
+        return recipeRepository.findByAllTags(tags, tagCount);
     }
 }
