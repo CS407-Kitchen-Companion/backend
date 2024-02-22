@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -140,8 +141,37 @@ public class RecipeController {
 
         List<Recipe> recipes = recipeService.searchRecipesByFilters(title, tags, appliances, calories);
 
+        List<Map<String, Object>> responseRecipes = recipes.stream()
+                .map(recipe -> {
+                    Map<String, Object> responseRecipe = new HashMap<>();
+                    responseRecipe.put("title", recipe.getTitle());
+                    responseRecipe.put("rating", recipe.getCalculatedRating()/recipe.getRatingCount());
+                    responseRecipe.put("serving size", recipe.getServes());
+                    responseRecipe.put("calories", recipe.getCalories());
+                    responseRecipe.put("time", recipe.getTime());
+                    responseRecipe.put("tags", recipe.getTags());
+
+                    String ingredientsString = recipe.getIngredients().entrySet().stream()
+                            .map(entry -> entry.getValue() + " " + entry.getKey())
+                            .collect(Collectors.joining(" · "));
+
+                    if (ingredientsString.length() > 100) {
+                        int lastWhitespaceIndex = ingredientsString.substring(0, 100).lastIndexOf(' ');
+                        if (lastWhitespaceIndex != -1) {
+                            ingredientsString = ingredientsString.substring(0, lastWhitespaceIndex) + " ...";
+                        } else {
+                            ingredientsString = ingredientsString.substring(0, 100) + " ...";
+                        }
+                    }
+
+                    responseRecipe.put("ingredients", ingredientsString);
+                    return responseRecipe;
+                })
+                .collect(Collectors.toList());
+
+
         if (!recipes.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(recipes));
+            return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(responseRecipes));
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -149,16 +179,21 @@ public class RecipeController {
     }
 
     @GetMapping(path = "/search/titles")
-    public ResponseEntity<GenericResponse> searchRecipesByPartialTitle(@RequestParam String partialTitle) {
-        if (partialTitle.isEmpty()) {
+    public ResponseEntity<GenericResponse> searchRecipesByPartialTitle(
+            @RequestParam String title,
+            @RequestParam(required = false) List<String> tags,
+            @RequestParam(required = false) List<String> appliances,
+            @RequestParam(required = false) Long calories) {
+
+        if (title.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new GenericResponse(400, "Partial title cannot be empty"));
         }
 
-        List<Recipe> recipes = recipeService.getRecipesByPartialTitle(partialTitle);
+        List<Recipe> recipes = recipeService.searchRecipesByFilters(title, tags, appliances, calories);
         if (recipes.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new GenericResponse(404, "No recipes found with the partial title: " + partialTitle));
+                    .body(new GenericResponse(404, "No recipes found"));
         }
 
         List<String> titles = recipes.stream()
@@ -167,6 +202,7 @@ public class RecipeController {
 
         return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(titles));
     }
+
 
 
     @GetMapping(path = "/{id}/rating")
