@@ -61,7 +61,7 @@ public class RecipeServiceImpl implements RecipeService {
         Specification<Recipe> spec = Specification.where(null);
 
         if (title != null && !title.isEmpty()) {
-            spec = spec.and((root, query, builder) -> builder.like(root.get("title"), "%" + title + "%"));
+            spec = spec.and((root, query, builder) -> builder.like(builder.lower(root.get("title")), "%" + title.toLowerCase() + "%"));
         }
 
         if (tags != null && !tags.isEmpty()) {
