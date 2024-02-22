@@ -26,8 +26,8 @@ public class Recipe {
     private Long id;
 
     private String title;
-
-    private String content;
+    @ElementCollection
+    private List<String> content;
 
     //    @JsonBackReference
 //    @ManyToOne
@@ -94,7 +94,7 @@ public class Recipe {
         calories = 0L;
     }
 
-    public Recipe(String title, String content, Long createdBy, Map<String, String> ingredients,
+    public Recipe(String title, List<String> content, Long createdBy, Map<String, String> ingredients,
                   Long time, Long serves, Long calories, List<String> tags, List<String> appliances) {
         this();
         this.title = title;
@@ -116,7 +116,7 @@ public class Recipe {
         return title;
     }
 
-    public String getContent() {
+    public List<String> getContent() {
         return content;
     }
 
@@ -140,7 +140,7 @@ public class Recipe {
         this.title = title;
     }
 
-    public void setContent(String content) {
+    public void setContent(List<String> content) {
         this.content = content;
     }
 
