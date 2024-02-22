@@ -10,8 +10,8 @@ public class NewRecipeRequest {
 
     @NotBlank
     public String title;
-    @NotBlank
-    public String content;
+    @NotNull
+    public List<String> content;
     @NotNull
     public Long time;
     @NotNull
