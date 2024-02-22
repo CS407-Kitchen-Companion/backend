@@ -293,7 +293,58 @@ N/A, use path: `/rating/{id}`
   }
 }
 ```
+## Search Public API
 
+| Method | Mapping              | Description                 | Model/Body/Params             | Auth | Status |
+|--------|----------------------|-----------------------------|-------------------------------|------|--------|
+| GET    | `/recipe/search?tags=&tags=` | Used to search for a recipe | See [get search](#get-search) | N    | Active |
+
+### get search
+
+#### Request Body
+
+N/A, use path: `/recipe/search?tags=abc`
+
+#### Response Body
+
+```json
+{
+  "response": "See Data.",
+  "status": 200,
+  "error": false,
+  "data": [
+    {
+      "id": 3,
+      "title": "title 1",
+      "content": "content 1",
+      "createdBy": 2,
+      "createdAt": "2024-02-20T21:18:58.875501Z",
+      "comments": [],
+      "ratings": [],
+      "appliances": [
+        "Knife",
+        "Litteral_Kitchen"
+      ],
+      "tags": [
+        "abc",
+        "def",
+        "tag1"
+      ],
+      "ingredients": {
+        "i1": "p1",
+        "i2": "p2"
+      },
+      "ratingCount": null,
+      "calculatedRating": null,
+      "serves": 5,
+      "time": 3600,
+      "calories": null,
+      "updatedAt": "2024-02-20T21:18:58.875501Z",
+      "edited": false
+    }
+  ]
+}
+```
 # Anything further is not valid
 
 ## Discussion API (/discussions)

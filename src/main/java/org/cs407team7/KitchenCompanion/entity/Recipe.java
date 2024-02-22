@@ -161,7 +161,11 @@ public class Recipe {
     }
 
     public Long getCalculatedRating() {
-        return calculatedRating;
+
+        if (ratingCount == 0) {
+            return 0L;
+        }
+        return (long) (calculatedRating / (double) ratingCount);
     }
 
     public List<Long> getRatings() {
