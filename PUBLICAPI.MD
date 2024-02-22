@@ -29,6 +29,7 @@
 | POST   | `/login`         | Used in user login                 | See [user login](#user-login)          | N    | Active |
 | GET    | `/{id}`          | Get User Data                      | Params: uid, See [get user](#get-user) | N    | Active |
 | GET    | `/{id}/username` | Get User Username Only             | Params: uid                            | N    | Active |
+| GET    | `/saved`         | Get recipes saved by user          | See [user saved](#user-saved)          | Y    | Active |
 | GET    | `/verify`        | Verify User email given token      | Params: uid, token                     | N    | Later  |
 | GET    | `/all`           | Get information for all users      |                                        | N    | Later  |
 | GET    | `/{id}/groups`   | Get list of groups created by user |                                        | N    | Later  |
@@ -232,6 +233,28 @@ N/A, use path: `/recipe/{id}`
     "calories": 105,
     "updatedAt": "2024-02-20T23:44:21.954814Z",
     "edited": false
+  }
+}
+```
+
+### user saved
+
+#### Request Body
+
+N/A, use path: `/saved`
+
+#### Response Body
+
+```json
+{
+  "response": "See Data.",
+  "status": 200,
+  "error": false,
+  "data": {
+    "id": 1,
+    "username": "test_1",
+    "email": "test@email",
+    "createdAt": "2024-02-12T21:05:41.846385Z"
   }
 }
 ```

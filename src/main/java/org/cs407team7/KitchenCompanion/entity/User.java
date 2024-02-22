@@ -13,7 +13,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -54,8 +56,11 @@ public class User implements UserDetails {
     @LastModifiedDate
     private Instant updatedAt;
 
-    public User() {
+    @ElementCollection
+    List<Long> savedRecipes;
 
+    public User() {
+        savedRecipes = new ArrayList<>();
     }
 
     public void setId(Long id) {
@@ -67,6 +72,7 @@ public class User implements UserDetails {
     }
 
     public User(String username, String password, String email) {
+        this();
         this.username = username;
         this.password = password;
         this.email = email;
@@ -151,6 +157,14 @@ public class User implements UserDetails {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<Long> getSavedRecipes() {
+        return savedRecipes;
+    }
+
+    public void setSavedRecipes(List<Long> savedRecipes) {
+        this.savedRecipes = savedRecipes;
     }
 }
 

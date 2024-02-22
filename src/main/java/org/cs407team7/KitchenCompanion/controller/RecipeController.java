@@ -3,6 +3,7 @@ package org.cs407team7.KitchenCompanion.controller;
 import jakarta.validation.Valid;
 import org.cs407team7.KitchenCompanion.entity.Recipe;
 import org.cs407team7.KitchenCompanion.entity.User;
+import org.cs407team7.KitchenCompanion.repository.RecipeRepository;
 import org.cs407team7.KitchenCompanion.requestobject.NewRecipeRequest;
 import org.cs407team7.KitchenCompanion.responseobject.ErrorResponse;
 import org.cs407team7.KitchenCompanion.responseobject.GenericResponse;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping(path = "/recipe")
@@ -29,12 +31,16 @@ public class RecipeController {
     @Autowired
     public UserService userService;
 
+    @Autowired
+    private RecipeRepository recipeRepository;
+
     @PostMapping(path = "/new")
     public ResponseEntity<Object> addRecipe(
             @RequestBody @Valid NewRecipeRequest payload
     ) {
         User user = userService.getAuthUser();
         if (user == null) {
+            System.out.println(user.getEmail());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                     new ErrorResponse(401, "You must be logged in to create a new recipe."));
         }
@@ -74,6 +80,28 @@ public class RecipeController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal Server Error"));
+        }
+    }
+
+    @GetMapping(path = "/{id}/save")
+    public ResponseEntity<Object> saveRecipe(@PathVariable Long id) {
+        User user = userService.getAuthUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    new ErrorResponse(401, "You must be logged in to see saved recipes."));
+        }
+        try {
+            recipeRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Could not find a recipe with that name"));
+            user.getSavedRecipes().add(id);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(user.getSavedRecipes()));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ErrorResponse(404, "Could not find a recipe with that name"));
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ErrorResponse(500, "Internal Server Error"));
+
         }
     }
 

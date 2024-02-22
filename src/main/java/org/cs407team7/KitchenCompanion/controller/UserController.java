@@ -1,6 +1,7 @@
 package org.cs407team7.KitchenCompanion.controller;
 
 import jakarta.validation.Valid;
+import org.cs407team7.KitchenCompanion.entity.Recipe;
 import org.cs407team7.KitchenCompanion.entity.User;
 import org.cs407team7.KitchenCompanion.repository.UserRepository;
 import org.cs407team7.KitchenCompanion.responseobject.ErrorResponse;
@@ -9,6 +10,7 @@ import org.cs407team7.KitchenCompanion.responseobject.PublicUserDataResponse;
 import org.cs407team7.KitchenCompanion.security.JwtResponse;
 import org.cs407team7.KitchenCompanion.security.JwtTokenUtil;
 import org.cs407team7.KitchenCompanion.security.JwtUserDetailsService;
+import org.cs407team7.KitchenCompanion.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,16 +30,26 @@ import java.util.Map;
 @RequestMapping(path = "/user")
 public class UserController {
 
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
+    private UserRepository userRepository;
+
     private AuthenticationManager authenticationManager;
 
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
     private JwtUserDetailsService userDetailsService;
+
+    private UserService userService;
+
+
+    @Autowired
+    public UserController(UserRepository userRepository, JwtUserDetailsService userDetailsService,
+                          JwtTokenUtil jwtTokenUtil, AuthenticationManager authenticationManager, UserService userservice) {
+        this.userRepository = userRepository;
+        this.userDetailsService = userDetailsService;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.authenticationManager = authenticationManager;
+        this.userService = userservice;
+    }
 
 
     @PostMapping(path = "/new")
@@ -95,6 +107,23 @@ public class UserController {
             return ResponseEntity.status(404).body(new ErrorResponse(404, "A user with that Id could not found"));
         }
         return ResponseEntity.ok(new GenericResponse(user.getUsername()));
+    }
+
+    @GetMapping(value = "/saved")
+    public ResponseEntity<?> getSavedRecipes() {
+        User user = userService.getAuthUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    new ErrorResponse(401, "You must be logged in to see saved recipes."));
+        }
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(user.getSavedRecipes()));
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ErrorResponse(500, "Internal Server Error"));
+
+        }
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
