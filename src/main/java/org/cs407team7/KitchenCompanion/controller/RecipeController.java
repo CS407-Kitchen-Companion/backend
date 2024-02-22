@@ -127,17 +127,25 @@ public class RecipeController {
     }
 
     @GetMapping(path = "/search")
-    public ResponseEntity<GenericResponse> getRecipesByTags(@RequestParam List<String> tags) {
-        if (tags.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericResponse(400, "You must specify at least one tag"));
+    public ResponseEntity<GenericResponse> searchRecipes(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) List<String> tags,
+            @RequestParam(required = false) List<String> appliances,
+            @RequestParam(required = false) Long calories) {
+
+        if (title == null && tags == null && appliances == null && calories == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new GenericResponse(400, "You must specify at least one filtering option"));
         }
 
-        List<Recipe> recipes = recipeService.getRecipesByAllTags(tags);
-        if (recipes.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GenericResponse(404, "No recipes found with the specified tags"));
+        List<Recipe> recipes = recipeService.searchRecipesByFilters(title, tags, appliances, calories);
+
+        if (!recipes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(recipes));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(recipes));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new GenericResponse(404, "No recipes found with the specified criteria"));
     }
 
     @GetMapping(path = "/search/titles")

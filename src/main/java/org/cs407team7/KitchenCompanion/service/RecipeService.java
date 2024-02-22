@@ -12,5 +12,6 @@ public interface RecipeService {
     void deleteRecipe(Long id);
      List<Recipe> getRecipesByAllTags(List<String> tags);
     List<Recipe> getRecipesByPartialTitle(String partialTitle);
+    List<Recipe> searchRecipesByFilters(String title, List<String> tags, List<String> appliances, Long calories);
 
 }
