@@ -3,6 +3,7 @@ package org.cs407team7.KitchenCompanion.service;
 import org.cs407team7.KitchenCompanion.entity.Recipe;
 import org.cs407team7.KitchenCompanion.repository.RecipeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,5 +49,33 @@ public class RecipeServiceImpl implements RecipeService {
     public List<Recipe> getRecipesByAllTags(List<String> tags) {
         Long tagCount = Long.valueOf(tags.size());
         return recipeRepository.findByAllTags(tags, tagCount);
+    }
+
+    @Override
+    public List<Recipe> getRecipesByPartialTitle(String partialTitle) {
+        return recipeRepository.findByPartialTitle(partialTitle);
+    }
+
+    @Override
+    public List<Recipe> searchRecipesByFilters(String title, List<String> tags, List<String> appliances, Long calories) {
+        Specification<Recipe> spec = Specification.where(null);
+
+        if (title != null && !title.isEmpty()) {
+            spec = spec.and((root, query, builder) -> builder.like(root.get("title"), "%" + title + "%"));
+        }
+
+        if (tags != null && !tags.isEmpty()) {
+            spec = spec.and((root, query, builder) -> root.join("tags").in(tags));
+        }
+
+        if (appliances != null && !appliances.isEmpty()) {
+            spec = spec.and((root, query, builder) -> root.join("appliances").in(appliances));
+        }
+
+        if (calories != null) {
+            spec = spec.and((root, query, builder) -> builder.lessThanOrEqualTo(root.get("calories"), calories));
+        }
+
+        return recipeRepository.findAll(spec);
     }
 }

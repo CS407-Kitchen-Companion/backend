@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/recipe")
@@ -126,18 +127,47 @@ public class RecipeController {
     }
 
     @GetMapping(path = "/search")
-    public ResponseEntity<GenericResponse> getRecipesByTags(@RequestParam List<String> tags) {
-        if (tags.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericResponse(400, "You must specify at least one tag"));
+    public ResponseEntity<GenericResponse> searchRecipes(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) List<String> tags,
+            @RequestParam(required = false) List<String> appliances,
+            @RequestParam(required = false) Long calories) {
+
+        if (title == null && tags == null && appliances == null && calories == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new GenericResponse(400, "You must specify at least one filtering option"));
         }
 
-        List<Recipe> recipes = recipeService.getRecipesByAllTags(tags);
-        if (recipes.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GenericResponse(404, "No recipes found with the specified tags"));
+        List<Recipe> recipes = recipeService.searchRecipesByFilters(title, tags, appliances, calories);
+
+        if (!recipes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(recipes));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(recipes));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new GenericResponse(404, "No recipes found with the specified criteria"));
     }
+
+    @GetMapping(path = "/search/titles")
+    public ResponseEntity<GenericResponse> searchRecipesByPartialTitle(@RequestParam String partialTitle) {
+        if (partialTitle.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new GenericResponse(400, "Partial title cannot be empty"));
+        }
+
+        List<Recipe> recipes = recipeService.getRecipesByPartialTitle(partialTitle);
+        if (recipes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new GenericResponse(404, "No recipes found with the partial title: " + partialTitle));
+        }
+
+        List<String> titles = recipes.stream()
+                .map(Recipe::getTitle)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(titles));
+    }
+
 
     @GetMapping(path = "/{id}/rating")
     public ResponseEntity<Object> getRecipeRating(@PathVariable Long id) {
@@ -154,6 +184,8 @@ public class RecipeController {
                     .body(new ErrorResponse(500, "Internal Server Error"));
         }
     }
+
+
 
 
 }
