@@ -13,6 +13,7 @@
 | User API    | [User API](#User-Public-API)     | User Related Functions   |
 | Recipes API | [Recipe API](#Recipe-Public-API) | Recipe Related Functions |
 | Ratings API | [Rating API](#Rating-Public-API) | Rating Related Functions |
+| Folders API | [Folder API](#Folder-Public-API) | Rating Related Functions |
 
 ## API Endpoints
 
@@ -272,6 +273,7 @@ N/A, use path: `/recipe/{id}`
 ### get recipe multi
 
 #### Request Body
+
 ```json
 {
   "recipes": [
@@ -281,6 +283,7 @@ N/A, use path: `/recipe/{id}`
   ]
 }
 ```
+
 #### Response Body
 
 ```json
@@ -405,64 +408,89 @@ N/A, use path: `/recipe/search?tags=abc`
 }
 ```
 
-# Anything further is not valid
+## Folder Public API
 
-## Discussion API (/discussions)
+| Method | Mapping | Description                 | Model/Body/Params                     | Auth | Status |
+|--------|---------|-----------------------------|---------------------------------------|------|--------|
+| POST   | `/new`  | Used in new Folder Creation | See [new folder](#new-folder)         | Y    | Active |
+| GET    | `/{id}` | Used to get a Folder        | See [get folder](#get-folder)         | N*   | Active |
+| POST   | `/save` | Save a recipe to the folder | See [save to folder](#save-to-folder) | Y    | Active |
 
-### Discussion Public API
+### new folder
 
-| Method | Mapping        | Description                                          | Model/Body/Params    | Auth | Status |
-|--------|----------------|------------------------------------------------------|----------------------|------|--------|
-| POST   | `/new`         | Used in new discussion creation                      | See `DiscussionNew`  | Y    | Active |
-| PUT    | `/{id}`        | Edit discussion information                          | See `DiscussionEdit` | Y    | Active | 
-| GET    | `/all`         | Get list of all discussions                          |                      | N    | Active |
-| GET    | `/{id}`        | Get information for specified discussion             |                      | N    | DEPREC | 
-| GET    | `/get`         | Get information for one or more discussions          |                      | N    | DEV-A  |
-| GET    | `/{id}/posts`  | Get list of all posts created in discussion          |                      | N    | DEPREC |
-| GET    | `/{id}/posts2` | Get list of all posts created in discussion (faster) |                      | N    | DEV-A  |
-| DELETE | `/{id}`        | Delete the given discussion                          |                      | Y    | Active |
-
-### Discussion API Models
-
-#### DiscussionNew
+#### Request Body
 
 ```json
 {
-  "title": "title",
-  "description": "description"
+  "title": "test folder 1"
 }
 ```
 
-#### DiscussionEdit
+#### Response Body
 
 ```json
 {
-  "title": "title",
-  "description": "description"
+  "response": "See Data.",
+  "status": 200,
+  "error": false,
+  "data": {
+    "id": 1,
+    "recipies": [],
+    "title": "test folder 1",
+    "createdBy": 4
+  }
 }
 ```
 
-#### DiscussionGet(V2)
+### get folder
 
-URL param
+#### Request Body
 
-| Variable | Optional | Description                        |
-|----------|----------|------------------------------------|
-| list     | No       | Query Param, used for many at once |
+N/A Use Path `/folder/{id}`
 
-Example usage:
-`http://localhost:8080/discussion/get?list=23,24`
+#### Response Body
 
-### Post Public API
+```json
+{
+  "response": "See Data.",
+  "status": 200,
+  "error": false,
+  "data": {
+    "id": 1,
+    "recipies": [
+      3
+    ],
+    "title": "test folder 1",
+    "createdBy": 4
+  }
+}
+```
 
-| Method | Mapping          | Description                               | Model/Body/Params    | Auth | Status   |
-|--------|------------------|-------------------------------------------|----------------------|------|----------|
-| POST   | `/new`           | Used in new post creation                 | See `DiscussionNew`  | Y    | Active   |
-| PUT    | `/{id}`          | Edit post information                     | See `DiscussionEdit` | Y    | Active   | 
-| GET    | `/all`           | Get list of all post                      |                      | N    | Active   |
-| GET    | `/{id}`          | Get information for specified post        |                      | N    | DEPREC   | 
-| GET    | `/get`           | Get information for one or more posts     |                      | N    | DEV-A    |
-| GET    | `/{id}/comments` | Get list of all comments created in posts |                      | N    | NEWDEV-B |
-| DELETE | `/{id}`          | Delete the given post                     |                      | Y    | Active   |
+### save to folder
 
-### Discussion API Models
+#### Request Body
+
+```json
+{
+  "folder": 1,
+  "recipe": 3
+}
+```
+
+#### Response Body
+
+```json
+{
+  "response": "See Data.",
+  "status": 200,
+  "error": false,
+  "data": {
+    "id": 1,
+    "recipies": [
+      3
+    ],
+    "title": "test folder 1",
+    "createdBy": 4
+  }
+}
+```
