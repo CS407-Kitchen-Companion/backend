@@ -316,7 +316,7 @@ N/A, use path: `/recipe/{id}`
   "rating": 5
 }
 ```
-
+:wq
 #### Response Body
 
 ```json
