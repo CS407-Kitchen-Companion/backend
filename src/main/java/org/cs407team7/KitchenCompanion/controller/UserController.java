@@ -126,6 +126,23 @@ public class UserController {
         }
     }
 
+    @GetMapping(value = "/folders")
+    public ResponseEntity<?> getCreatedFolders() {
+        User user = userService.getAuthUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    new ErrorResponse(401, "You must be logged in to see saved folders."));
+        }
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(user.getFolders()));
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ErrorResponse(500, "Internal Server Error"));
+
+        }
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody Map<String, String> payload) throws Exception {
 

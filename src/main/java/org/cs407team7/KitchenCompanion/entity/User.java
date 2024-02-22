@@ -59,8 +59,12 @@ public class User implements UserDetails {
     @ElementCollection
     private List<Long> savedRecipes;
 
+    @ElementCollection
+    private List<Long> folders;
+
     public User() {
         savedRecipes = new ArrayList<>();
+        folders = new ArrayList<>();
     }
 
     public void setId(Long id) {
@@ -72,7 +76,7 @@ public class User implements UserDetails {
     }
 
     public User(String username, String password, String email) {
-        savedRecipes = new ArrayList<>();
+        this();
         this.username = username;
         this.password = password;
         this.email = email;
@@ -165,6 +169,14 @@ public class User implements UserDetails {
 
     public void setSavedRecipes(List<Long> savedRecipes) {
         this.savedRecipes = savedRecipes;
+    }
+
+    public List<Long> getFolders() {
+        return folders;
+    }
+
+    public void setFolders(List<Long> folders) {
+        this.folders = folders;
     }
 }
 
