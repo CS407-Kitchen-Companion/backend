@@ -354,16 +354,22 @@ N/A, use path: `/rating/{id}`
 
 ## Search Public API
 
-| Method | Mapping                      | Description                 | Model/Body/Params             | Auth | Status |
-|--------|------------------------------|-----------------------------|-------------------------------|------|--------|
-| GET    | `/recipe/search?tags=&tags=` | Used to search for a recipe | See [get search](#get-search) | N    | Active |
+| Method | Mapping                                             | Description                                   | Model/Body/Params                             | Auth | Status |
+|--------|-----------------------------------------------------|-----------------------------------------------|-----------------------------------------------|------|--------|
+| GET    | `/recipe/search?title=&calories=&appliances=&tags=` | Used to search for recipes                    | See [get search](#get-search)                 | N    | Active |
+| GET    | `/recipe/search/titles?partialTitle=Spa`            | Used to search for recipes with partial title | See [get search partial](#get-search-partial) | N    | Active |
 
 ### get search
 
 #### Request Body
 
-N/A, use path: `/recipe/search?tags=abc`
+N/A, use path: `/recipe/search?title=Spa&calories=400&appliances=Large skillet`
 
+title is partial title so Spa will give Spaghetti
+
+calories will give all calories below mentioned number
+
+appliances have to be exactly string matched
 #### Response Body
 
 ```json
@@ -373,38 +379,76 @@ N/A, use path: `/recipe/search?tags=abc`
   "error": false,
   "data": [
     {
-      "id": 3,
-      "title": "title 1",
-      "content": [],
-      "createdBy": 2,
-      "createdAt": "2024-02-20T21:18:58.875501Z",
+      "id": 1,
+      "title": "Spaghetti Recipe",
+      "content": [
+        "Cook spaghetti according to package instructions until al dente.",
+        "In a large skillet, heat olive oil over medium heat.",
+        "Add minced garlic and sauté until fragrant.",
+        "Add diced tomatoes, tomato paste, and Italian seasoning. Cook until tomatoes break down and sauce thickens, about 10 minutes.",
+        "Season with salt and pepper to taste.",
+        "Add cooked spaghetti to the skillet and toss to coat in the sauce.",
+        "Serve hot, garnished with grated Parmesan cheese and chopped fresh basil."
+      ],
+      "createdBy": 1,
+      "createdAt": "2024-02-22T00:30:13.405327Z",
       "comments": [],
-      "ratings": [],
+      "ratings": [
+        1,
+        2,
+        3,
+        4
+      ],
       "appliances": [
-        "Knife",
-        "Litteral_Kitchen"
+        "Large skillet",
+        "Pot for boiling water"
       ],
       "tags": [
-        "abc",
-        "def",
-        "tag1"
+        "spaghetti",
+        "Italian",
+        "pasta"
       ],
       "ingredients": {
-        "i1": "p1",
-        "i2": "p2"
+        "garlic": "3 cloves, minced",
+        "salt": "to taste",
+        "spaghetti": "1 pound",
+        "Italian seasoning": "1 teaspoon",
+        "black pepper": "to taste",
+        "Parmesan cheese": "for garnish",
+        "diced tomatoes": "1 can (14 oz)",
+        "fresh basil": "for garnish",
+        "tomato paste": "2 tablespoons",
+        "olive oil": "2 tablespoons"
       },
-      "ratingCount": null,
-      "calculatedRating": null,
-      "serves": 5,
-      "time": 3600,
-      "calories": null,
-      "updatedAt": "2024-02-20T21:18:58.875501Z",
+      "ratingCount": 4,
+      "calculatedRating": 2,
+      "serves": 4,
+      "time": 20,
+      "calories": 350,
+      "updatedAt": "2024-02-22T02:02:22.219862Z",
       "edited": false
     }
   ]
 }
 ```
+### get search partial
 
+#### Request Body
+
+N/A, use path: `/recipe/search/titles?partialTitle=Spa`
+
+#### Response Body
+
+```json
+{
+  "response": "See Data.",
+  "status": 200,
+  "error": false,
+  "data": [
+    "Spaghetti Recipe"
+  ]
+}
+```
 # Anything further is not valid
 
 ## Discussion API (/discussions)
