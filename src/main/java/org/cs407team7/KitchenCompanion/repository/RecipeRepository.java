@@ -14,9 +14,10 @@ import java.util.Optional;
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     Optional<Recipe> findById(long id);
 
+    List<Recipe> findAllByIdIn(List<Long> id);
+
     @Query("SELECT r FROM Recipe r JOIN r.tags t WHERE t IN :tags GROUP BY r HAVING COUNT(DISTINCT t) = :tagCount")
     List<Recipe> findByAllTags(@Param("tags") List<String> tags, @Param("tagCount") Long tagCount);
-
 
 
 }

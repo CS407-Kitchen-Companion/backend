@@ -113,12 +113,35 @@ N/A, use path: `/user/{id}`
 }
 ```
 
+### user saved
+
+#### Request Body
+
+N/A, use path: `/saved`
+
+#### Response Body
+
+```json
+{
+  "response": "See Data.",
+  "status": 200,
+  "error": false,
+  "data": [
+    2,
+    3,
+    4
+  ]
+}
+```
+
 ## Recipe Public API
 
-| Method | Mapping | Description                 | Model/Body/Params             | Auth | Status |
-|--------|---------|-----------------------------|-------------------------------|------|--------|
-| POST   | `/new`  | Used in new Recipe Creation | See [new recipe](#new-recipe) | Y    | Active |
-| GET    | `/{id}` | Used to get a Recipie       | See [get recipe](#get-recipe) | N    | Active |
+| Method | Mapping      | Description                 | Model/Body/Params                         | Auth | Status |
+|--------|--------------|-----------------------------|-------------------------------------------|------|--------|
+| POST   | `/new`       | Used in new Recipe Creation | See [new recipe](#new-recipe)             | Y    | Active |
+| GET    | `/{id}`      | Used to get a Recipe        | See [get recipe](#get-recipe)             | N    | Active |
+| GET    | `/get`       | Used to get several Recipes | See [get recipe multi](#get-recipe-multi) | N    | Active |
+| GET    | `/{id}/save` | Used to get a Recipe        | Save a post as a user                     | Y    | Active |
 
 ## Recipe API Models
 
@@ -131,7 +154,10 @@ Calories optional value
 ```json
 {
   "title": "title 1",
-  "content": ["direction1","direction2"],
+  "content": [
+    "direction1",
+    "direction2"
+  ],
   "serves": 5,
   "time": 3600,
   "calories": 105,
@@ -161,7 +187,10 @@ Calories optional value
   "data": {
     "id": 3,
     "title": "title 1",
-    "content": ["direction1","direction2"],
+    "content": [
+      "direction1",
+      "direction2"
+    ],
     "createdBy": 2,
     "createdAt": "2024-02-20T21:18:58.875501Z",
     "comments": [],
@@ -206,7 +235,10 @@ N/A, use path: `/recipe/{id}`
   "data": {
     "id": 24,
     "title": "title 1",
-    "content": ["direction1","direction2"],
+    "content": [
+      "direction1",
+      "direction2"
+    ],
     "createdBy": 2,
     "createdAt": "2024-02-20T23:43:38.226555Z",
     "comments": [],
@@ -237,12 +269,18 @@ N/A, use path: `/recipe/{id}`
 }
 ```
 
-### user saved
+### get recipe multi
 
 #### Request Body
-
-N/A, use path: `/saved`
-
+```json
+{
+  "recipes": [
+    1,
+    2,
+    3
+  ]
+}
+```
 #### Response Body
 
 ```json
@@ -250,12 +288,9 @@ N/A, use path: `/saved`
   "response": "See Data.",
   "status": 200,
   "error": false,
-  "data": {
-    "id": 1,
-    "username": "test_1",
-    "email": "test@email",
-    "createdAt": "2024-02-12T21:05:41.846385Z"
-  }
+  "data": [
+    ...
+  ]
 }
 ```
 
@@ -316,10 +351,11 @@ N/A, use path: `/rating/{id}`
   }
 }
 ```
+
 ## Search Public API
 
-| Method | Mapping              | Description                 | Model/Body/Params             | Auth | Status |
-|--------|----------------------|-----------------------------|-------------------------------|------|--------|
+| Method | Mapping                      | Description                 | Model/Body/Params             | Auth | Status |
+|--------|------------------------------|-----------------------------|-------------------------------|------|--------|
 | GET    | `/recipe/search?tags=&tags=` | Used to search for a recipe | See [get search](#get-search) | N    | Active |
 
 ### get search
@@ -368,6 +404,7 @@ N/A, use path: `/recipe/search?tags=abc`
   ]
 }
 ```
+
 # Anything further is not valid
 
 ## Discussion API (/discussions)

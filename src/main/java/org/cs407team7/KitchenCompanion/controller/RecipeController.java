@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.cs407team7.KitchenCompanion.entity.Recipe;
 import org.cs407team7.KitchenCompanion.entity.User;
 import org.cs407team7.KitchenCompanion.repository.RecipeRepository;
+import org.cs407team7.KitchenCompanion.repository.UserRepository;
 import org.cs407team7.KitchenCompanion.requestobject.NewRecipeRequest;
 import org.cs407team7.KitchenCompanion.responseobject.ErrorResponse;
 import org.cs407team7.KitchenCompanion.responseobject.GenericResponse;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -32,6 +34,9 @@ public class RecipeController {
     public UserService userService;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private RecipeRepository recipeRepository;
 
     @PostMapping(path = "/new")
@@ -40,7 +45,6 @@ public class RecipeController {
     ) {
         User user = userService.getAuthUser();
         if (user == null) {
-            System.out.println(user.getEmail());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                     new ErrorResponse(401, "You must be logged in to create a new recipe."));
         }
@@ -83,6 +87,20 @@ public class RecipeController {
         }
     }
 
+    @GetMapping(path = "/get")
+    public ResponseEntity<Object> getRecipeMulti(
+            @RequestBody Map<String, List<Long>> payload
+    ) {
+        try {
+            List<Recipe> recipes = recipeRepository.findAllByIdIn(payload.get("recipes"));
+            return ResponseEntity.ok(new GenericResponse(201, recipes));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(500, "Internal Server Error"));
+        }
+    }
+
     @GetMapping(path = "/{id}/save")
     public ResponseEntity<Object> saveRecipe(@PathVariable Long id) {
         User user = userService.getAuthUser();
@@ -92,8 +110,10 @@ public class RecipeController {
         }
         try {
             recipeRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Could not find a recipe with that name"));
+            user = userRepository.findById(user.getId()).orElse(null);
             user.getSavedRecipes().add(id);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(user.getSavedRecipes()));
+            userRepository.save(user);
+            return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(user.getSavedRecipes()));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new ErrorResponse(404, "Could not find a recipe with that name"));

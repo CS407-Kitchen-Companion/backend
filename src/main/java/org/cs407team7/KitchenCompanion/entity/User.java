@@ -57,7 +57,7 @@ public class User implements UserDetails {
     private Instant updatedAt;
 
     @ElementCollection
-    List<Long> savedRecipes;
+    private List<Long> savedRecipes;
 
     public User() {
         savedRecipes = new ArrayList<>();
@@ -72,7 +72,7 @@ public class User implements UserDetails {
     }
 
     public User(String username, String password, String email) {
-        this();
+        savedRecipes = new ArrayList<>();
         this.username = username;
         this.password = password;
         this.email = email;
