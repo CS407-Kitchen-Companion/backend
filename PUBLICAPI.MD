@@ -69,7 +69,13 @@
 {
   "response": "Please Verify Email",
   "status": 200,
-  "error": false
+  "error": false,
+  "data": {
+    "id": 5,
+    "username": "test_5",
+    "email": "test5@email",
+    "createdAt": "2024-02-22T22:32:28.053262Z"
+  }
 }
 ```
 

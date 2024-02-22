@@ -80,9 +80,11 @@ public class UserController {
 
         userRepository.save(n);
 
+        PublicUserDataResponse user = new PublicUserDataResponse(n.getId(), n.getUsername(), n.getEmail(), n.getCreatedAt());
+
 //        emailService.sendVerificationEmail(n, n.getToken(), n.getId());
 
-        return ResponseEntity.status(201).body(new GenericResponse("Please Verify Email"));
+        return ResponseEntity.status(201).body(new GenericResponse("Please Verify Email", user));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
