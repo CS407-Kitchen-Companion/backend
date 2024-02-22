@@ -130,7 +130,7 @@ Calories optional value
 ```json
 {
   "title": "title 1",
-  "content": "content 1",
+  "content": ["direction1","direction2"],
   "serves": 5,
   "time": 3600,
   "calories": 105,
@@ -160,7 +160,7 @@ Calories optional value
   "data": {
     "id": 3,
     "title": "title 1",
-    "content": "content 1",
+    "content": ["direction1","direction2"],
     "createdBy": 2,
     "createdAt": "2024-02-20T21:18:58.875501Z",
     "comments": [],
@@ -205,7 +205,7 @@ N/A, use path: `/recipe/{id}`
   "data": {
     "id": 24,
     "title": "title 1",
-    "content": "content 1",
+    "content": ["direction1","direction2"],
     "createdBy": 2,
     "createdAt": "2024-02-20T23:43:38.226555Z",
     "comments": [],
