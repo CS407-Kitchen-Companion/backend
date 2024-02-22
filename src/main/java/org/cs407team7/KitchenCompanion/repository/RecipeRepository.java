@@ -19,5 +19,8 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     @Query("SELECT r FROM Recipe r JOIN r.tags t WHERE t IN :tags GROUP BY r HAVING COUNT(DISTINCT t) = :tagCount")
     List<Recipe> findByAllTags(@Param("tags") List<String> tags, @Param("tagCount") Long tagCount);
 
+    @Query("SELECT r FROM Recipe r WHERE r.title LIKE %?1%")
+    List<Recipe> findByPartialTitle(String partialTitle);
+
 
 }

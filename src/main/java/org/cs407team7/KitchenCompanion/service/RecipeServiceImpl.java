@@ -49,4 +49,9 @@ public class RecipeServiceImpl implements RecipeService {
         Long tagCount = Long.valueOf(tags.size());
         return recipeRepository.findByAllTags(tags, tagCount);
     }
+
+    @Override
+    public List<Recipe> getRecipesByPartialTitle(String partialTitle) {
+        return recipeRepository.findByPartialTitle(partialTitle);
+    }
 }

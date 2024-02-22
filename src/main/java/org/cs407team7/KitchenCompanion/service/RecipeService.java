@@ -11,4 +11,6 @@ public interface RecipeService {
     Recipe updateRecipe(Long id, Recipe recipe);
     void deleteRecipe(Long id);
      List<Recipe> getRecipesByAllTags(List<String> tags);
+    List<Recipe> getRecipesByPartialTitle(String partialTitle);
+
 }
