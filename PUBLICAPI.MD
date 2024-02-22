@@ -316,7 +316,7 @@ N/A, use path: `/recipe/search?tags=abc`
     {
       "id": 3,
       "title": "title 1",
-      "content": "content 1",
+      "content": [],
       "createdBy": 2,
       "createdAt": "2024-02-20T21:18:58.875501Z",
       "comments": [],
