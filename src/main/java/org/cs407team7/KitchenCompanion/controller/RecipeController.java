@@ -203,6 +203,11 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(titles));
     }
 
+    @GetMapping(path = "/search/filters")
+    public ResponseEntity<GenericResponse> getFilters() {
+        String[] filters = {"title", "calories", "appliances", "tags"};
+        return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(filters));
+    }
 
 
     @GetMapping(path = "/{id}/rating")
