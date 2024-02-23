@@ -100,6 +100,7 @@ public class FolderController {
             return ResponseEntity.status(400).body(
                     new ErrorResponse(400, e.getMessage()));
         } catch (IllegalArgumentException e) {
+            System.out.println(e);
             return ResponseEntity.status(400).body(
                     new ErrorResponse(400, "Could not find a recipe with that name"));
         } catch (Exception e) {
@@ -131,4 +132,35 @@ public class FolderController {
                     .body(new ErrorResponse(500, "Internal Server Error"));
         }
     }
+
+    @GetMapping(value = "/{folderId}/recipe/{recipeId}")
+    public ResponseEntity<?> checkRecipeInFolder(
+            @PathVariable Long folderId,
+            @PathVariable Long recipeId
+    ) {
+        try {
+            Folder folder = folderRepository.findById(folderId).orElse(null);
+            if (folder == null) {
+                throw new NoSuchElementException("Could not find that folder");
+            }
+
+            Recipe recipe = recipeRepository.findById(recipeId).orElse(null);
+            if (recipe == null) {
+                throw new NoSuchElementException("Could not find that recipe");
+            }
+
+            if (folder.getRecipies().contains(recipe.getId())) {
+                return ResponseEntity.ok(new GenericResponse(200, "Recipe is in the folder","True"));
+            } else {
+                return ResponseEntity.ok(new GenericResponse(200, "Recipe is not in the folder","False"));
+            }
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse(404, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(500, "Internal Server Error"));
+        }
+    }
+
 }
