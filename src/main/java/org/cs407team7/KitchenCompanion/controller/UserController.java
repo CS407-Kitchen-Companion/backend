@@ -1,13 +1,16 @@
 package org.cs407team7.KitchenCompanion.controller;
 
 import jakarta.validation.Valid;
+import org.cs407team7.KitchenCompanion.entity.Recipe;
 import org.cs407team7.KitchenCompanion.entity.User;
 import org.cs407team7.KitchenCompanion.repository.UserRepository;
 import org.cs407team7.KitchenCompanion.responseobject.ErrorResponse;
 import org.cs407team7.KitchenCompanion.responseobject.GenericResponse;
+import org.cs407team7.KitchenCompanion.responseobject.PublicUserDataResponse;
 import org.cs407team7.KitchenCompanion.security.JwtResponse;
 import org.cs407team7.KitchenCompanion.security.JwtTokenUtil;
 import org.cs407team7.KitchenCompanion.security.JwtUserDetailsService;
+import org.cs407team7.KitchenCompanion.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,28 +25,32 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.security.SecureRandom;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/user")
 public class UserController {
-//    @PostMapping("/login")
-//    public ResponseEntity<String> authenticateUser(@RequestBody Login login) {
-//        Authentication authentication = authenticationManager
-//                .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        return new ResponseEntity<>("User login successfully!...", HttpStatus.OK);
-//    }
 
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
+    private UserRepository userRepository;
+
     private AuthenticationManager authenticationManager;
 
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
     private JwtUserDetailsService userDetailsService;
+
+    private UserService userService;
+
+
+    @Autowired
+    public UserController(UserRepository userRepository, JwtUserDetailsService userDetailsService,
+                          JwtTokenUtil jwtTokenUtil, AuthenticationManager authenticationManager, UserService userservice) {
+        this.userRepository = userRepository;
+        this.userDetailsService = userDetailsService;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.authenticationManager = authenticationManager;
+        this.userService = userservice;
+    }
 
 
     @PostMapping(path = "/new")
@@ -74,19 +81,11 @@ public class UserController {
 
         userRepository.save(n);
 
+        PublicUserDataResponse user = new PublicUserDataResponse(n.getId(), n.getUsername(), n.getEmail(), n.getCreatedAt());
+
 //        emailService.sendVerificationEmail(n, n.getToken(), n.getId());
 
-        return ResponseEntity.status(201).body(new GenericResponse("Please Verify Email"));
-    }
-
-    private String generateRandomString(int length) {
-        String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890123456789";
-        StringBuilder rand = new StringBuilder();
-        SecureRandom secureRandom = new SecureRandom();
-        for (int i = 0; i < length; i++) {
-            rand.append(str.charAt(secureRandom.nextInt(str.length())));
-        }
-        return rand.toString();
+        return ResponseEntity.status(201).body(new GenericResponse("Please Verify Email", user));
     }
 
     @PostMapping(path = "/updatePassword")
@@ -124,6 +123,64 @@ public class UserController {
         return ResponseEntity.status(201).body(new GenericResponse("Please Verify Email"));
     }
 
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getUser(
+            @PathVariable Long id
+    ) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body(new ErrorResponse(404, "A user with that Id could not found"));
+        }
+        PublicUserDataResponse preparedData = new PublicUserDataResponse(user.getId(), user.getUsername(),
+                user.getEmail(), user.getCreatedAt());
+        return ResponseEntity.ok(new GenericResponse(preparedData));
+    }
+
+    @RequestMapping(value = "/{id}/username", method = RequestMethod.GET)
+    public ResponseEntity<?> getUsername(
+            @PathVariable Long id
+    ) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body(new ErrorResponse(404, "A user with that Id could not found"));
+        }
+        return ResponseEntity.ok(new GenericResponse(user.getUsername()));
+    }
+
+    @GetMapping(value = "/saved")
+    public ResponseEntity<?> getSavedRecipes() {
+        User user = userService.getAuthUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    new ErrorResponse(401, "You must be logged in to see saved recipes."));
+        }
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(user.getSavedRecipes()));
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ErrorResponse(500, "Internal Server Error"));
+
+        }
+    }
+
+    @GetMapping(value = "/folders")
+    public ResponseEntity<?> getCreatedFolders() {
+        User user = userService.getAuthUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    new ErrorResponse(401, "You must be logged in to see saved folders."));
+        }
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(user.getFolders()));
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ErrorResponse(500, "Internal Server Error"));
+
+        }
+    }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody Map<String, String> payload) throws Exception {
@@ -171,4 +228,15 @@ public class UserController {
         System.out.println(auth.isAuthenticated()); // is authenticated?
         return ResponseEntity.ok().body(new GenericResponse("AuthSuccess for " + user.getUsername()));
     }
+
+    private String generateRandomString(int length) {
+        String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890123456789";
+        StringBuilder rand = new StringBuilder();
+        SecureRandom secureRandom = new SecureRandom();
+        for (int i = 0; i < length; i++) {
+            rand.append(str.charAt(secureRandom.nextInt(str.length())));
+        }
+        return rand.toString();
+    }
+
 }
