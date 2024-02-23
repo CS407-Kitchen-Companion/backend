@@ -25,6 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.security.SecureRandom;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/user")
@@ -86,6 +87,42 @@ public class UserController {
 
         return ResponseEntity.status(201).body(new GenericResponse("Please Verify Email", user));
     }
+
+    @PostMapping(path = "/updatePassword")
+    public ResponseEntity<Object> updatePassword(
+            @RequestBody Map<String, String> payload
+    ) {
+        if (!payload.containsKey("newPassword") || !payload.containsKey("oldPassword") || !payload.containsKey("userId") ||
+                payload.get("newPassword").isBlank() || payload.get("oldPassword").isBlank() || payload.get("userId").isBlank()
+        ) {
+            return ResponseEntity.status(401).body(new ErrorResponse(401, "Invalid Format"));
+        }
+        Optional<User> optionalUser = userRepository.findById(Long.valueOf(payload.get("userId")));
+
+
+        if (!optionalUser.isPresent()) {
+            // 409 - Conflict
+            return ResponseEntity.status(409).body(new ErrorResponse(409, "user is not in use"));
+        }
+        User user = optionalUser.get();
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10, new SecureRandom());
+        System.out.println(user.getPassword());
+        System.out.println(payload.get("oldPassword"));
+        if (!bCryptPasswordEncoder.matches(payload.get("oldPassword"), user.getPassword())) {
+            // 409 - Conflict
+            return ResponseEntity.status(409).body(new ErrorResponse(409, "Invalid Password"));
+        }
+        user.setPassword(bCryptPasswordEncoder.encode(payload.get("newPassword")));
+
+
+        //todo  Pending confirmation: Whether the method of updating based on id is called updateById
+        userRepository.save(user);
+
+
+        //todo Pending confirmation: The specific format of the return parameters
+        return ResponseEntity.status(201).body(new GenericResponse("Please Verify Email"));
+    }
+
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getUser(
