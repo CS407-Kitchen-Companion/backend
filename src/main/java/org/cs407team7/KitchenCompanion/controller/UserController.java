@@ -10,9 +10,11 @@ import org.cs407team7.KitchenCompanion.responseobject.PublicUserDataResponse;
 import org.cs407team7.KitchenCompanion.security.JwtResponse;
 import org.cs407team7.KitchenCompanion.security.JwtTokenUtil;
 import org.cs407team7.KitchenCompanion.security.JwtUserDetailsService;
+import org.cs407team7.KitchenCompanion.service.EmailService;
 import org.cs407team7.KitchenCompanion.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
@@ -31,25 +33,29 @@ import java.util.Optional;
 @RequestMapping(path = "/user")
 public class UserController {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    private JwtTokenUtil jwtTokenUtil;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    private JwtUserDetailsService userDetailsService;
+    private final JwtUserDetailsService userDetailsService;
 
-    private UserService userService;
+    private final UserService userService;
+
+    private final EmailService emailService;
 
 
     @Autowired
     public UserController(UserRepository userRepository, JwtUserDetailsService userDetailsService,
-                          JwtTokenUtil jwtTokenUtil, AuthenticationManager authenticationManager, UserService userservice) {
+                          JwtTokenUtil jwtTokenUtil, AuthenticationManager authenticationManager, UserService userservice,
+                          EmailService emailService) {
         this.userRepository = userRepository;
         this.userDetailsService = userDetailsService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticationManager = authenticationManager;
         this.userService = userservice;
+        this.emailService = emailService;
     }
 
 
@@ -77,9 +83,28 @@ public class UserController {
         n.setToken(generateRandomString(64));
 
         // I'll deal with email later
-        n.setVerified(true);
+//        n.setVerified(true);
 
         userRepository.save(n);
+
+
+        String base = "https://kitchencompanion.eastus.cloudapp.azure.com/api/v1";
+        String url = base + "/user/verify?uid=" + n.getId() + "&token=" + n.getToken();
+        String contents = "<div style=\"max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">\n" +
+                "    <h1 style=\"text-align: center; color: #4caf50;\">Kitchen Companion</h1>\n" +
+                "    <p>Hi there,</p>\n" +
+                "    <p>Welcome to Kitchen Companion! To get started, please verify your email address by clicking the button below:</p>\n" +
+                "    <div style=\"text-align: center; margin-bottom: 20px;\">\n" +
+                "        <a href=\"" + url + "\" style=\"display: inline-block; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border-radius: 5px;\">Verify Email</a>\n" +
+                "    </div>\n" +
+                "    <p>If you didn't create an account on Kitchen Companion, you can safely ignore this email.</p>\n" +
+                "    <p>Thank you,<br>Kitchen Companion Team</p>\n" +
+                "</div>";
+        // TODO make sure links are generalised
+
+        emailService.sendEmailHtml(n.getEmail(),
+                "Please verify your email",
+                contents);
 
         PublicUserDataResponse user = new PublicUserDataResponse(n.getId(), n.getUsername(), n.getEmail(), n.getCreatedAt());
 
@@ -121,6 +146,24 @@ public class UserController {
 
         //todo Pending confirmation: The specific format of the return parameters
         return ResponseEntity.status(201).body(new GenericResponse("Please Verify Email"));
+    }
+
+    @GetMapping(path = "/verify", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> verifyUser(
+            @RequestParam String uid,
+            @RequestParam String token) {
+
+        User u = userRepository.findById(Long.parseLong(uid)).orElse(null);
+        if (u != null && u.getToken().equals(token) && !u.getVerified()) {
+            u.setVerified(true);
+        } else if (u != null && u.getVerified()) {
+            return ResponseEntity.status(400).body(new ErrorResponse(400, "Error verifying user email: User already verified"));
+        } else {
+            return ResponseEntity.status(400).body(new ErrorResponse(400, "Error verifying user email: No user with matching code token"));
+        }
+        userRepository.save(u);
+//        return ResponseEntity.status(200).body(new GenericResponse("User " + u.getEmail() + " verified."));
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:3000/login")).build();
     }
 
 
