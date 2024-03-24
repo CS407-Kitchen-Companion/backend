@@ -25,10 +25,11 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     //    @JsonManagedReference
 //    @ManyToOne
 //    @JoinColumn(name = "post_id", nullable = false)
-    private Long recipie;
+    private Long recipe;
 
     //    @JsonManagedReference
 //    @ManyToMany
@@ -41,6 +42,9 @@ public class Comment {
 //    private boolean isReply;
 
     private String content;
+
+    @Column(nullable = true)
+    private Long parentCommentId;
 
     //    @JsonBackReference
 //    @ManyToOne
@@ -83,4 +87,22 @@ public class Comment {
     public void setCreatedBy(Long createdBy) {
         this.createdBy = createdBy;
     }
+
+    public Long getParentCommentId() {
+        return parentCommentId;
+    }
+
+    public void setParentCommentId(Long parentCommentId) {
+        this.parentCommentId = parentCommentId;
+    }
+
+    public Long getRecipe() {
+        return recipe;
+    }
+
+    public void setRecipe(Long recipe) {
+        this.recipe = recipe;
+    }
+
+
 }
