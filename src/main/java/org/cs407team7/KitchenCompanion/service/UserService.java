@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
 
@@ -34,5 +36,8 @@ public class UserService {
 //        }
         return userRepository.findById(1L).orElse(null);
 //        return userRepository.findByEmail(email).orElse(null);
+    }
+    public Optional<String> findUsernameById(Long userId) {
+        return userRepository.findById(userId).map(User::getUsername);
     }
 }
