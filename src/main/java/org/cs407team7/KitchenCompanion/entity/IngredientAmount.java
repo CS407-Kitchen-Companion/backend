@@ -1,37 +1,80 @@
 package org.cs407team7.KitchenCompanion.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
-@Deprecated
-/**
- * Dont use, havent decided if usage is ideal.
- */
+
+@EntityListeners(AuditingEntityListener.class)
+@Entity
+@Table(name = "ingredients")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class IngredientAmount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "recipe_id", nullable = false)
+    private Recipe recipe;
 
-    private String content;
+    private String name;
+
+    private Double amount;
+
+    private String unit;
+
+    public IngredientAmount() {
+
+    }
+
+    public IngredientAmount(Recipe recipe, String name, Double amount, String unit) {
+        this.recipe = recipe;
+        this.name = name;
+        this.amount = amount;
+        this.unit = unit;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Recipe getRecipe() {
+        return recipe;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
 
     // TODO: Future nutrition info
-
-    @CreatedDate
-    private Instant createdAt;
-
-//    private Long editCount;
-
-//    private boolean pinned = false;
-
-    @LastModifiedDate
-    private Instant updatedAt;
 }

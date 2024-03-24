@@ -2,9 +2,11 @@ package org.cs407team7.KitchenCompanion.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.nimbusds.jose.crypto.impl.AAD;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -63,8 +65,16 @@ public class Recipe {
     // TODO: make entity with limited list not user supplied randomness
     @ElementCollection
     private List<String> tags;
-    @ElementCollection
-    private Map<String, String> ingredients;
+
+    @JsonManagedReference
+    @OneToMany
+    @NotNull
+    @JoinTable(
+            name = "ingredient_list",
+            joinColumns = @JoinColumn(name = "ingredient_id"),
+            inverseJoinColumns = @JoinColumn(name = "recipie_id")
+    )
+    private List<IngredientAmount> ingredients;
 //    private List<Long> ingredients;
 
 //    private Map<IngredientData, String> ingredients;
@@ -85,7 +95,7 @@ public class Recipe {
     public Recipe() {
         comments = new ArrayList<>();
         ratings = new ArrayList<>();
-        ingredients = new TreeMap<>();
+        ingredients = new ArrayList<>();
         appliances = new ArrayList<>();
 //        steps = new ArrayList<>();
         tags = new ArrayList<>();
@@ -94,7 +104,7 @@ public class Recipe {
         calories = 0L;
     }
 
-    public Recipe(String title, List<String> content, Long createdBy, Map<String, String> ingredients,
+    public Recipe(String title, List<String> content, Long createdBy, List<IngredientAmount> ingredients,
                   Long time, Long serves, Long calories, List<String> tags, List<String> appliances) {
         this();
         this.title = title;
@@ -189,11 +199,11 @@ public class Recipe {
 
     }
 
-    public Map<String, String> getIngredients() {
+    public List<IngredientAmount> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(Map<String, String> ingredients) {
+    public void setIngredients(List<IngredientAmount> ingredients) {
         this.ingredients = ingredients;
     }
 

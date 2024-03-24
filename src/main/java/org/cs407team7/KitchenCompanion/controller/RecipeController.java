@@ -1,8 +1,10 @@
 package org.cs407team7.KitchenCompanion.controller;
 
 import jakarta.validation.Valid;
+import org.cs407team7.KitchenCompanion.entity.IngredientAmount;
 import org.cs407team7.KitchenCompanion.entity.Recipe;
 import org.cs407team7.KitchenCompanion.entity.User;
+import org.cs407team7.KitchenCompanion.repository.IngredientAmountRepository;
 import org.cs407team7.KitchenCompanion.repository.RecipeRepository;
 import org.cs407team7.KitchenCompanion.repository.UserRepository;
 import org.cs407team7.KitchenCompanion.requestobject.NewRecipeRequest;
@@ -14,11 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,19 +27,25 @@ import java.util.stream.Collectors;
 public class RecipeController {
     private final RecipeService recipeService;
 
+    public final UserService userService;
+
+    private final UserRepository userRepository;
+
+    private final RecipeRepository recipeRepository;
+
+    private final IngredientAmountRepository ingredientAmountRepository;
+
     @Autowired
-    public RecipeController(RecipeService recipeService) {
+    public RecipeController(UserService userService, UserRepository userRepository,
+                            RecipeRepository recipeRepository,
+                            RecipeService recipeService,
+                            IngredientAmountRepository ingredientAmountRepository) {
+        this.userService = userService;
+        this.userRepository = userRepository;
         this.recipeService = recipeService;
+        this.recipeRepository = recipeRepository;
+        this.ingredientAmountRepository = ingredientAmountRepository;
     }
-
-    @Autowired
-    public UserService userService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RecipeRepository recipeRepository;
 
     @PostMapping(path = "/new")
     public ResponseEntity<Object> addRecipe(
@@ -58,14 +64,25 @@ public class RecipeController {
             if (payload.calories == null) {
                 payload.calories = 99L;
             }
-
-            Recipe recipe = new Recipe(payload.title, payload.content, createdBy, payload.ingredients,
+            List<IngredientAmount> ingredients = new ArrayList<>();
+            Recipe recipe = new Recipe(payload.title, payload.content, createdBy, ingredients,
                     payload.time, payload.serves, payload.calories, payload.tags, payload.appliances);
 
-            // Sure that works, ill change a few things to match this in the future
-            Recipe savedRecipe = recipeService.addRecipe(recipe);
+            recipeService.addRecipe(recipe);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(savedRecipe));
+            for (Map<String, String> ingredient : payload.ingredients) {
+                IngredientAmount newIngredient = new IngredientAmount(
+                        recipe,
+                        ingredient.get("ingredient"),
+                        Double.parseDouble(ingredient.get("amount")),
+                        ingredient.get("unit"));
+                ingredientAmountRepository.save(newIngredient);
+                ingredients.add(newIngredient);
+            }
+            // Sure that works, ill change a few things to match this in the future
+            recipe = recipeService.addRecipe(recipe);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(recipe));
         } catch (Exception e) {
             System.out.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
@@ -78,12 +95,15 @@ public class RecipeController {
     public ResponseEntity<Object> getRecipe(@PathVariable Long id) {
         try {
             Recipe recipe = recipeService.getRecipeById(id);
-            if (recipe != null) {
-                return ResponseEntity.ok(new GenericResponse(201, recipe));
+            return ResponseEntity.ok(new GenericResponse(201, recipe));
+        } catch (ResponseStatusException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return ResponseEntity.status(404).body(new ErrorResponse(404, "Could not find a recipe with that Id"));
             } else {
-                return ResponseEntity.notFound().build();
+                throw e;
             }
         } catch (Exception e) {
+            System.out.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal Server Error"));
         }
@@ -145,14 +165,14 @@ public class RecipeController {
                 .map(recipe -> {
                     Map<String, Object> responseRecipe = new HashMap<>();
                     responseRecipe.put("title", recipe.getTitle());
-                    responseRecipe.put("rating", recipe.getCalculatedRating()/recipe.getRatingCount());
+                    responseRecipe.put("rating", recipe.getCalculatedRating() / recipe.getRatingCount());
                     responseRecipe.put("serving size", recipe.getServes());
                     responseRecipe.put("calories", recipe.getCalories());
                     responseRecipe.put("time", recipe.getTime());
                     responseRecipe.put("tags", recipe.getTags());
 
-                    String ingredientsString = recipe.getIngredients().entrySet().stream()
-                            .map(entry -> entry.getValue() + " " + entry.getKey())
+                    String ingredientsString = recipe.getIngredients().stream()
+                            .map(entry -> entry.getName() + " " + entry.getAmount() + entry.getUnit())
                             .collect(Collectors.joining(" · "));
 
                     if (ingredientsString.length() > 100) {
@@ -225,8 +245,6 @@ public class RecipeController {
                     .body(new ErrorResponse(500, "Internal Server Error"));
         }
     }
-
-
 
 
 }

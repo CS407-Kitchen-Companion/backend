@@ -21,8 +21,11 @@ public class NewRecipeRequest {
     public Long calories;
     @NotNull
     public List<String> tags;
-    @NotNull
-    public Map<String, String> ingredients;
+//    @NotNull
+//    public Map<String, String> ingredients;
+
+    public List<Map<String, String>> ingredients;
+
     @NotNull
     public List<String> appliances;
 }
