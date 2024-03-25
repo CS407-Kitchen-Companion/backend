@@ -1,16 +1,29 @@
 package org.cs407team7.KitchenCompanion.security;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JwtResponse implements Serializable {
 
-    private final String token;
+    Long response;
 
-    public JwtResponse(String token) {
-        this.token = token;
+    int status;
+
+    boolean error;
+
+    Map<String, String> data;
+
+    public JwtResponse(String token, Long id) {
+        data = new HashMap<>();
+        data.put("token", token);
+        this.response = id;
+        this.status = 200;
+        this.error = false;
     }
 
     public String getToken() {
         return this.token;
     }
+
 }

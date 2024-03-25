@@ -253,7 +253,7 @@ public class UserController {
 
         final String token = jwtTokenUtil.generateToken(userDetails);
 
-        return ResponseEntity.ok(new GenericResponse(Long.toString(user.getId()), new JwtResponse(token)));
+        return ResponseEntity.ok(new GenericResponse(new JwtResponse(token, user.getId())));
     }
 
     private void authenticate(String username, String password) throws Exception {
