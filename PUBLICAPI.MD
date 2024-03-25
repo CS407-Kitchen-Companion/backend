@@ -161,10 +161,7 @@ Calories optional value
 ```json
 {
   "title": "title 1",
-  "content": [
-    "direction1",
-    "direction2"
-  ],
+  "content": ["direction1","direction2"],
   "serves": 5,
   "time": 3600,
   "calories": 105,
@@ -177,10 +174,18 @@ Calories optional value
     "Knife",
     "Litteral_Kitchen"
   ],
-  "ingredients": {
-    "i1": "p1",
-    "i2": "p2"
-  }
+  "ingredients": [
+    {
+      "ingredient": "p1",
+      "amount": 1.2,
+      "unit": "kg"
+    },
+    {
+      "ingredient": "p2",
+      "amount": 137,
+      "unit": "g"
+    }
+  ]
 }
 ```
 
@@ -192,14 +197,14 @@ Calories optional value
   "status": 200,
   "error": false,
   "data": {
-    "id": 3,
+    "id": 1,
     "title": "title 1",
     "content": [
       "direction1",
       "direction2"
     ],
-    "createdBy": 2,
-    "createdAt": "2024-02-20T21:18:58.875501Z",
+    "createdBy": 1,
+    "createdAt": "2024-03-25T22:45:18.900713395Z",
     "comments": [],
     "ratings": [],
     "appliances": [
@@ -211,16 +216,26 @@ Calories optional value
       "def",
       "tag1"
     ],
-    "ingredients": {
-      "i1": "p1",
-      "i2": "p2"
-    },
-    "ratingCount": null,
-    "calculatedRating": null,
+    "ingredients": [
+      {
+        "id": 1,
+        "name": "p1",
+        "amount": 1.2,
+        "unit": "kg"
+      },
+      {
+        "id": 2,
+        "name": "p2",
+        "amount": 137.0,
+        "unit": "g"
+      }
+    ],
+    "ratingCount": 0,
+    "calculatedRating": 0,
     "serves": 5,
     "time": 3600,
-    "calories": null,
-    "updatedAt": "2024-02-20T21:18:58.875501Z",
+    "calories": 105,
+    "updatedAt": "2024-03-25T22:45:18.900713395Z",
     "edited": false
   }
 }
