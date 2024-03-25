@@ -230,16 +230,23 @@ public class UserController {
     public ResponseEntity<?> createAuthenticationToken(@RequestBody Map<String, String> payload) throws Exception {
 
 //        System.out.println("auth1");
-        authenticate(payload.get("username"), payload.get("password"));
+        try {
+            authenticate(payload.get("username"), payload.get("password"));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(401).body(
+                    new ErrorResponse(401, "No user exists with such a username or password combination."));
+
+        }
 //        System.out.println("auth2");
 
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(payload.get("username"));
 
         final User user = userRepository.findByUsername(userDetails.getUsername()).orElse(null);
-        if (user == null) {
-            return ResponseEntity.status(400).body(new ErrorResponse(400, "No user exists with such a username or password combination."));
-        }
+//        if (user == null) {
+//            return ResponseEntity.status(400).body(
+//                    new ErrorResponse(400, "No user exists with such a username or password combination."));
+//        }
         if (!user.isVerified()) {
             return ResponseEntity.status(400).body(new ErrorResponse(400, "Please verify your email."));
         }
@@ -258,7 +265,7 @@ public class UserController {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
 //            System.out.println("auth4");
-            throw new Exception("INVALID_CREDENTIALS", e);
+            throw new BadCredentialsException("INVALID_CREDENTIALS", e);
         } catch (Exception e) {
 //            System.out.println("auth5 " + e);
             throw e;
