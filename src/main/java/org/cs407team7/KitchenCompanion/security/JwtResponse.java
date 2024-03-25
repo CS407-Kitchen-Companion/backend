@@ -22,8 +22,23 @@ public class JwtResponse implements Serializable {
         this.error = false;
     }
 
-    public String getToken() {
-        return this.token;
+//    public String getToken() {
+//        return this.data.get("token");
+//    }
+
+    public Long getResponse() {
+        return response;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public boolean isError() {
+        return error;
+    }
+
+    public Map<String, String> getData() {
+        return data;
+    }
 }
