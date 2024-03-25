@@ -82,7 +82,7 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public Boolean getVerified() {
+    public Boolean isVerified() {
         return verified;
     }
 

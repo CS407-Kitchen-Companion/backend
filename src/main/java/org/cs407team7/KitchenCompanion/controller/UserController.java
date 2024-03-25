@@ -88,14 +88,15 @@ public class UserController {
         userRepository.save(n);
 
 
-        String base = "https://kitchencompanion.eastus.cloudapp.azure.com/api/v1";
-        String url = base + "/user/verify?uid=" + n.getId() + "&token=" + n.getToken();
+//        String base = "https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/user";
+        String base = "http://localhost:3000";
+        String url = base + "/verify?uid=" + n.getId() + "&token=" + n.getToken();
         String contents = "<div style=\"max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">\n" +
-                "    <h1 style=\"text-align: center; color: #4caf50;\">Kitchen Companion</h1>\n" +
+                "    <h1 style=\"text-align: center; color: #2D3566;\">Kitchen Companion</h1>\n" +
                 "    <p>Hi there,</p>\n" +
                 "    <p>Welcome to Kitchen Companion! To get started, please verify your email address by clicking the button below:</p>\n" +
                 "    <div style=\"text-align: center; margin-bottom: 20px;\">\n" +
-                "        <a href=\"" + url + "\" style=\"display: inline-block; padding: 10px 20px; background-color: #4caf50; color: #fff; text-decoration: none; border-radius: 5px;\">Verify Email</a>\n" +
+                "        <a href=\"" + url + "\" style=\"display: inline-block; padding: 10px 20px; background-color: #2D3566; color: #fff; text-decoration: none; border-radius: 5px;\">Verify Email</a>\n" +
                 "    </div>\n" +
                 "    <p>If you didn't create an account on Kitchen Companion, you can safely ignore this email.</p>\n" +
                 "    <p>Thank you,<br>Kitchen Companion Team</p>\n" +
@@ -154,9 +155,9 @@ public class UserController {
             @RequestParam String token) {
 
         User u = userRepository.findById(Long.parseLong(uid)).orElse(null);
-        if (u != null && u.getToken().equals(token) && !u.getVerified()) {
+        if (u != null && u.getToken().equals(token) && !u.isVerified()) {
             u.setVerified(true);
-        } else if (u != null && u.getVerified()) {
+        } else if (u != null && u.isVerified()) {
             return ResponseEntity.status(400).body(new ErrorResponse(400, "Error verifying user email: User already verified"));
         } else {
             return ResponseEntity.status(400).body(new ErrorResponse(400, "Error verifying user email: No user with matching code token"));
@@ -234,6 +235,14 @@ public class UserController {
 
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(payload.get("username"));
+
+        final User user = userRepository.findByUsername(userDetails.getUsername()).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(400).body(new ErrorResponse(400, "No user exists with such a username or password combination."));
+        }
+        if (!user.isVerified()) {
+            return ResponseEntity.status(400).body(new ErrorResponse(400, "Please verify your email."));
+        }
 
         final String token = jwtTokenUtil.generateToken(userDetails);
 
