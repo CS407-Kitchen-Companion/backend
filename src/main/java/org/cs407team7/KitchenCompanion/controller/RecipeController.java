@@ -69,7 +69,7 @@ public class RecipeController {
         }
     }
 
-    @PostMapping(path = "/new")
+    @PostMapping(path = "/edit")
     public ResponseEntity<?> editRecipe(
             @RequestBody @Valid NewRecipeRequest payload
     ) {

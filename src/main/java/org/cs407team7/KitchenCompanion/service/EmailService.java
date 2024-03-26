@@ -22,9 +22,7 @@ public class EmailService {
     public void sendVerificationEmail(User user, String verifyCode, long id) throws MailException {
         String url = "https://kitchencompanion.eastus.cloudapp.azure.com/api/v1";
         // TODO make sure links are generalised
-        sendEmail(user.getEmail(), "Verify Email",
-                "Please click link to verify: " +
-                        "\r\n" + url + "/user/verify?uid=" + id + "&token=" + verifyCode);
+        sendEmail(user.getEmail(), "Verify Email", "Please click link to verify: " + "\r\n" + url + "/user/verify?uid=" + id + "&token=" + verifyCode);
     }
 
     public void sendEmail(String email, String subject, String contents) {
@@ -39,8 +37,9 @@ public class EmailService {
 
     public void sendEmailHtml(String email, String subject, String contents) {
         // Set up generic here
-        String header = "";
-        String footer = "";
+        String header = "<div style=\"max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">\n" +
+                "<h1 style=\"text-align: center; color: #2D3566;\">Kitchen Companion</h1>\n";
+        String footer = "</div>";
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);

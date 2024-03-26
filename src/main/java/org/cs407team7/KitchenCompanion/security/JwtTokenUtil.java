@@ -7,13 +7,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
 
 
 /**
@@ -25,9 +29,9 @@ public class JwtTokenUtil implements Serializable {
     // 14 days instead of 5 hours
     public static final long JWT_TOKEN_VALIDITY = 14 * 24 * 60 * 60;
 
-//    @Value("${jwt.secret}")
+    //    @Value("${jwt.secret}")
     private final String secret = "hardcodethatshouldbeinenvvar" +
-        "hubgerhlugbeuigrt82hufbdwlkuyrg32879rgilwuygf8wu7gr2lui3yebliuwebfgi8u7gti2u3rbflsidubfgkslueygt8i4uhdbfu87g2";
+            "hubgerhlugbeuigrt82hufbdwlkuyrg32879rgilwuygf8wu7gr2lui3yebliuwebfgi8u7gti2u3rbflsidubfgkslueygt8i4uhdbfu87g2";
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
@@ -43,6 +47,7 @@ public class JwtTokenUtil implements Serializable {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
+
     //for retrieveing any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();

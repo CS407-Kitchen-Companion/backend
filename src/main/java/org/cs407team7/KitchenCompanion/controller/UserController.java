@@ -92,16 +92,13 @@ public class UserController {
 //        String base = "https://kitchencompanion.eastus.cloudapp.azure.com/api/v1/user";
         String base = "http://localhost:3000";
         String url = base + "/verify?uid=" + n.getId() + "&token=" + n.getToken();
-        String contents = "<div style=\"max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">\n" +
-                "    <h1 style=\"text-align: center; color: #2D3566;\">Kitchen Companion</h1>\n" +
-                "    <p>Hi there,</p>\n" +
+        String contents = "    <p>Hi there,</p>\n" +
                 "    <p>Welcome to Kitchen Companion! To get started, please verify your email address by clicking the button below:</p>\n" +
                 "    <div style=\"text-align: center; margin-bottom: 20px;\">\n" +
                 "        <a href=\"" + url + "\" style=\"display: inline-block; padding: 10px 20px; background-color: #2D3566; color: #fff; text-decoration: none; border-radius: 5px;\">Verify Email</a>\n" +
                 "    </div>\n" +
                 "    <p>If you didn't create an account on Kitchen Companion, you can safely ignore this email.</p>\n" +
-                "    <p>Thank you,<br>Kitchen Companion Team</p>\n" +
-                "</div>";
+                "    <p>Thank you,<br>Kitchen Companion Team</p>\n";
         // TODO make sure links are generalised
 
         emailService.sendEmailHtml(n.getEmail(),
@@ -124,46 +121,44 @@ public class UserController {
         ) {
             return ResponseEntity.status(401).body(new ErrorResponse(401, "Invalid Format"));
         }
-        Optional<User> optionalUser = userRepository.findById(Long.valueOf(payload.get("userId")));
+        User user = userService.findUserById(Long.valueOf(payload.get("userId")));
 
+//        if (!optionalUser.isPresent()) {
+//            // 409 - Conflict
+//            return ResponseEntity.status(409).body(new ErrorResponse(409, "user is not in use"));
+//        }
+//        User user = optionalUser.get();
 
-        if (!optionalUser.isPresent()) {
-            // 409 - Conflict
-            return ResponseEntity.status(409).body(new ErrorResponse(409, "user is not in use"));
-        }
-        User user = optionalUser.get();
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10, new SecureRandom());
-        System.out.println(user.getPassword());
-        System.out.println(payload.get("oldPassword"));
+
+//        System.out.println(user.getPassword());
+//        System.out.println(payload.get("oldPassword"));
+
         if (!bCryptPasswordEncoder.matches(payload.get("oldPassword"), user.getPassword())) {
             // 409 - Conflict
             return ResponseEntity.status(409).body(new ErrorResponse(409, "Invalid Password"));
         }
+
         user.setPassword(bCryptPasswordEncoder.encode(payload.get("newPassword")));
 
-
-        //todo  Pending confirmation: Whether the method of updating based on id is called updateById
         userRepository.save(user);
 
-
-        //todo Pending confirmation: The specific format of the return parameters
-        return ResponseEntity.status(201).body(new GenericResponse("Please Verify Email"));
+        return ResponseEntity.status(200).body(new GenericResponse("Password successfully updated."));
     }
 
     @GetMapping(path = "/verify", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> verifyUser(
             @RequestParam String uid,
             @RequestParam String token) {
-
-        User u = userRepository.findById(Long.parseLong(uid)).orElse(null);
-        if (u != null && u.getToken().equals(token) && !u.isVerified()) {
-            u.setVerified(true);
-        } else if (u != null && u.isVerified()) {
+        User user = userService.findUserById(Long.parseLong(uid));
+        if (user != null && user.getToken().equals(token) && !user.isVerified()) {
+            user.setVerified(true);
+        } else if (user != null && user.isVerified()) {
             return ResponseEntity.status(400).body(new ErrorResponse(400, "Error verifying user email: User already verified"));
         } else {
             return ResponseEntity.status(400).body(new ErrorResponse(400, "Error verifying user email: No user with matching code token"));
         }
-        userRepository.save(u);
+        userRepository.save(user);
 //        return ResponseEntity.status(200).body(new GenericResponse("User " + u.getEmail() + " verified."));
         return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:3000/login")).build();
     }
@@ -173,7 +168,7 @@ public class UserController {
     public ResponseEntity<?> getUser(
             @PathVariable Long id
     ) {
-        User user = userRepository.findById(id).orElse(null);
+        User user = userService.findUserById(id);
         if (user == null) {
             return ResponseEntity.status(404).body(new ErrorResponse(404, "A user with that Id could not found"));
         }
@@ -186,7 +181,7 @@ public class UserController {
     public ResponseEntity<?> getUsername(
             @PathVariable Long id
     ) {
-        User user = userRepository.findById(id).orElse(null);
+        User user = userService.findUserById(id);
         if (user == null) {
             return ResponseEntity.status(404).body(new ErrorResponse(404, "A user with that Id could not found"));
         }
@@ -200,14 +195,14 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                     new ErrorResponse(401, "You must be logged in to see saved recipes."));
         }
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(user.getSavedRecipes()));
-        } catch (Exception e) {
-            System.out.println(e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    new ErrorResponse(500, "Internal Server Error"));
-
-        }
+//        try {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(user.getSavedRecipes()));
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+//                    new ErrorResponse(500, "Internal Server Error"));
+//
+//        }
     }
 
     @GetMapping(value = "/folders")
@@ -217,14 +212,14 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                     new ErrorResponse(401, "You must be logged in to see saved folders."));
         }
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(user.getFolders()));
-        } catch (Exception e) {
-            System.out.println(e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    new ErrorResponse(500, "Internal Server Error"));
-
-        }
+//        try {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(user.getFolders()));
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+//                    new ErrorResponse(500, "Internal Server Error"));
+//
+//        }
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -236,17 +231,17 @@ public class UserController {
 
 //        System.out.println("auth2");
 
-            final UserDetails userDetails = userDetailsService
+            UserDetails userDetails = userDetailsService
                     .loadUserByUsername(payload.get("username"));
 
-            final User user = userRepository.findByUsername(userDetails.getUsername())
+            User user = userRepository.findByUsername(userDetails.getUsername())
                     .orElseThrow(() -> new UsernameNotFoundException("No such username"));
 
             if (!user.isVerified()) {
                 return ResponseEntity.status(400).body(new ErrorResponse(400, "Please verify your email."));
             }
 
-            final String token = jwtTokenUtil.generateToken(userDetails);
+            String token = jwtTokenUtil.generateToken(userDetails);
 
             return ResponseEntity.ok(new JwtResponse(token, user.getId()));
 
@@ -263,15 +258,11 @@ public class UserController {
     private void authenticate(String username, String password) throws Exception {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-//            System.out.println("auth2a");
         } catch (DisabledException e) {
-//            System.out.println("auth3");
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
-//            System.out.println("auth4");
             throw new BadCredentialsException("INVALID_CREDENTIALS", e);
         } catch (Exception e) {
-//            System.out.println("auth5 " + e);
             throw e;
         }
     }
