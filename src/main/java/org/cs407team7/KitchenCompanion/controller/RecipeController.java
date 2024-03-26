@@ -222,7 +222,27 @@ public class RecipeController {
 
     @GetMapping(path = "/search/filters")
     public ResponseEntity<GenericResponse> getFilters() {
-        String[] filters = {"title", "calories", "appliances", "tags"};
+        List<String> distinctAppliances = recipeRepository.findDistinctAppliances();
+        List<String> distinctServes = recipeRepository.findDistinctServes();
+        List<String> rangeTime = recipeRepository.findTimeRanges();
+
+        List<Map<String, Object>> filters = new ArrayList<>();
+
+        Map<String, Object> appliancesFilter = new LinkedHashMap<>();
+        appliancesFilter.put("title", "Appliances");
+        appliancesFilter.put("options", distinctAppliances);
+        filters.add(appliancesFilter);
+
+        Map<String, Object> servingsFilter = new LinkedHashMap<>();
+        servingsFilter.put("title", "Servings");
+        servingsFilter.put("options", distinctServes);
+        filters.add(servingsFilter);
+
+        Map<String, Object> timeFilter = new LinkedHashMap<>();
+        timeFilter.put("title", "Cook Time");
+        timeFilter.put("options", rangeTime);
+        filters.add(timeFilter);
+
         return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(filters));
     }
 
