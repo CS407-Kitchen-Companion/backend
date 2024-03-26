@@ -33,6 +33,8 @@ public class IngredientAmount {
 
     private String unit;
 
+    private Integer parsedUnit;
+
     public IngredientAmount() {
 
     }
@@ -42,6 +44,10 @@ public class IngredientAmount {
         this.name = name;
         this.amount = amount;
         this.unit = unit;
+    }
+
+    private void parseUnit(String unit) {
+
     }
 
     public Long getId() {

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,36 +32,33 @@ public class RecipeService {
 
     private final UserRepository userRepository;
 
+    private final NutritionService nutritionService;
+
 
     @Autowired
     public RecipeService(UserService userService, UserRepository userRepository,
-                         RecipeRepository recipeRepository,
+                         RecipeRepository recipeRepository, NutritionService nutritionService,
                          IngredientAmountRepository ingredientAmountRepository) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.recipeRepository = recipeRepository;
+        this.nutritionService = nutritionService;
         this.ingredientAmountRepository = ingredientAmountRepository;
     }
 
     public ResponseEntity<?> createRecipie(NewRecipeRequest payload, Long createdBy) {
         // TODO: check non null values
-        if (payload.calories == null) {
-            payload.calories = 99L;
-        }
+
         List<IngredientAmount> ingredients = new ArrayList<>();
         Recipe recipe = new Recipe(payload.title, payload.content, createdBy, ingredients,
                 payload.time, payload.serves, payload.calories, payload.tags, payload.appliances);
 
         addRecipe(recipe);
 
-        for (Map<String, String> ingredient : payload.ingredients) {
-            IngredientAmount newIngredient = new IngredientAmount(
-                    recipe,
-                    ingredient.get("ingredient"),
-                    Double.parseDouble(ingredient.get("amount")),
-                    ingredient.get("unit"));
-            ingredientAmountRepository.save(newIngredient);
-            ingredients.add(newIngredient);
+        parseCreateIngredient(payload, ingredients, recipe);
+
+        if (recipe.getCalories() == null) {
+            recipe.setCalories(nutritionService.estimateCalories(ingredients));
         }
 
         recipe = addRecipe(recipe);
@@ -75,9 +73,37 @@ public class RecipeService {
                     ResponseStatusException(
                     HttpStatus.UNAUTHORIZED, "You may only edit your own recipes");
         }
-        // TODO: Actually make the edits
+        recipe.largeEdit(payload.title, payload.content, payload.time,
+                payload.serves, payload.calories, payload.tags, payload.appliances);
+
+        addRecipe(recipe);
+
+        List<IngredientAmount> ingredients = new ArrayList<>(recipe.getIngredients());
+        recipe.getIngredients().clear();
+        addRecipe(recipe);
+
+        ingredientAmountRepository.deleteAll(ingredients);
+        ingredients = new ArrayList<>();
+
+        parseCreateIngredient(payload, ingredients, recipe);
+        recipe.setCalories(nutritionService.estimateCalories(ingredients));
+        recipe.setIngredients(ingredients);
+
+        recipe = addRecipe(recipe);
 
         return ResponseEntity.ok(new GenericResponse(recipe));
+    }
+
+    private void parseCreateIngredient(NewRecipeRequest payload, List<IngredientAmount> ingredients, Recipe recipe) {
+        for (Map<String, String> ingredient : payload.ingredients) {
+            IngredientAmount newIngredient = new IngredientAmount(
+                    recipe,
+                    ingredient.get("ingredient"),
+                    Double.parseDouble(ingredient.get("amount")),
+                    ingredient.get("unit"));
+            ingredientAmountRepository.save(newIngredient);
+            ingredients.add(newIngredient);
+        }
     }
 
 

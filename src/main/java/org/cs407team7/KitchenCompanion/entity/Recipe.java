@@ -118,6 +118,17 @@ public class Recipe {
         this.appliances = appliances;
     }
 
+    public void largeEdit(String title, List<String> content, Long time, Long serves,
+                          Long calories, List<String> tags, List<String> appliances) {
+        this.title = title;
+        this.content = content;
+        this.time = time;
+        this.serves = serves;
+        this.calories = calories;
+        this.tags = tags;
+        this.appliances = appliances;
+    }
+
     public Long getId() {
         return id;
     }

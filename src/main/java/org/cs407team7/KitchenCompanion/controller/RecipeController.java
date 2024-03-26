@@ -80,6 +80,13 @@ public class RecipeController {
         }
         try {
             return recipeService.editRecipe(payload, user);
+
+        } catch (ResponseStatusException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return ResponseEntity.status(404).body(new ErrorResponse(404, "Could not find a recipe with that Id"));
+            } else {
+                throw e;
+            }
         } catch (Exception e) {
             System.out.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
