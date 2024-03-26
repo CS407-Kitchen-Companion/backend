@@ -66,6 +66,8 @@ public class Recipe {
     @ElementCollection
     private List<String> tags;
 
+    // TODO: TYPO IN RECIPE
+
     @JsonManagedReference
     @OneToMany
     @NotNull
@@ -127,6 +129,7 @@ public class Recipe {
         this.calories = calories;
         this.tags = tags;
         this.appliances = appliances;
+        isEdited = true;
     }
 
     public Long getId() {

@@ -76,6 +76,8 @@ public class RecipeService {
         recipe.largeEdit(payload.title, payload.content, payload.time,
                 payload.serves, payload.calories, payload.tags, payload.appliances);
 
+        recipe.setE
+
         addRecipe(recipe);
 
         List<IngredientAmount> ingredients = new ArrayList<>(recipe.getIngredients());

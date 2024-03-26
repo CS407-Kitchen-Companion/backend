@@ -10,7 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
 
 @Entity
-@Table(name = "ingredients")
+@Table(name = "ingredient_data")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,

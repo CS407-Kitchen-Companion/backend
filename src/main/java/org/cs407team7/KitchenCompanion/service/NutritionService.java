@@ -18,5 +18,7 @@ public class NutritionService {
         return (long) ingredients.size();
     }
 
+    public void searchOne(String ingredientName) {
 
+    }
 }

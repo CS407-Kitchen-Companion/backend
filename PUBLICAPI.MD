@@ -91,7 +91,9 @@
 ```
 
 #### Response Body
+
 Correct Example
+
 ```json
 {
   "response": 56,
@@ -102,15 +104,18 @@ Correct Example
   }
 }
 ```
+
 Error Example
+
 ```json
 {
-    "response": "No user exists with such a username or password combination.",
-    "status": 401,
-    "error": true,
-    "data": null
+  "response": "No user exists with such a username or password combination.",
+  "status": 401,
+  "error": true,
+  "data": null
 }
 ```
+
 ### get user
 
 #### Request Body
@@ -156,12 +161,13 @@ N/A, use path: `/saved`
 
 ## Recipe Public API
 
-| Method | Mapping      | Description                 | Model/Body/Params                         | Auth | Status |
-|--------|--------------|-----------------------------|-------------------------------------------|------|--------|
-| POST   | `/new`       | Used in new Recipe Creation | See [new recipe](#new-recipe)             | Y    | Active |
-| GET    | `/{id}`      | Used to get a Recipe        | See [get recipe](#get-recipe)             | N    | Active |
-| GET    | `/get`       | Used to get several Recipes | See [get recipe multi](#get-recipe-multi) | N    | Active |
-| GET    | `/{id}/save` | Used to get a Recipe        | Save a post as a user                     | Y    | Active |
+| Method | Mapping      | Description                 | Model/Body/Params                          | Auth | Status |
+|--------|--------------|-----------------------------|--------------------------------------------|------|--------|
+| POST   | `/new`       | Used in new Recipe Creation | See [new recipe](#new-recipe)              | Y    | Active |
+| POST   | `/edit`      | Used in Recipe editing      | See [new recipe](#new-recipe) (provide id) | Y    | Active |
+| GET    | `/{id}`      | Used to get a Recipe        | See [get recipe](#get-recipe)              | N    | Active |
+| GET    | `/get`       | Used to get several Recipes | See [get recipe multi](#get-recipe-multi)  | N    | Active |
+| GET    | `/{id}/save` | Used to get a Recipe        | Save a post as a user                      | Y    | Active |
 
 ## Recipe API Models
 
@@ -169,12 +175,15 @@ N/A, use path: `/saved`
 
 #### Request Body
 
-Calories optional value
+Calories optional value, if not provided, an estimate will be made.
 
 ```json
 {
   "title": "title 1",
-  "content": ["direction1","direction2"],
+  "content": [
+    "direction1",
+    "direction2"
+  ],
   "serves": 5,
   "time": 3600,
   "calories": 105,
@@ -350,7 +359,9 @@ N/A, use path: `/recipe/{id}`
   "rating": 5
 }
 ```
+
 :wq
+
 #### Response Body
 
 ```json

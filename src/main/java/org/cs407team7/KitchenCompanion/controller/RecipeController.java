@@ -176,7 +176,7 @@ public class RecipeController {
                     responseRecipe.put("tags", recipe.getTags());
 
                     String ingredientsString = recipe.getIngredients().stream()
-                            .map(entry -> entry.getName() + " " + entry.getAmount() + entry.getUnit())
+                            .map(entry -> entry.getIngredient() + " " + entry.getAmount() + entry.getUnit())
                             .collect(Collectors.joining(" · "));
 
                     if (ingredientsString.length() > 100) {
