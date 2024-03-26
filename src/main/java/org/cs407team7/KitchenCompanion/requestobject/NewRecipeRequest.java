@@ -28,4 +28,7 @@ public class NewRecipeRequest {
 
     @NotNull
     public List<String> appliances;
+
+    // Optional for updating/editing
+    public Long id;
 }

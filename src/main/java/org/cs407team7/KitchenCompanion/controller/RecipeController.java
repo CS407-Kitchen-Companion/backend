@@ -48,7 +48,7 @@ public class RecipeController {
     }
 
     @PostMapping(path = "/new")
-    public ResponseEntity<Object> addRecipe(
+    public ResponseEntity<?> addRecipe(
             @RequestBody @Valid NewRecipeRequest payload
     ) {
         User user = userService.getAuthUser();
@@ -60,29 +60,26 @@ public class RecipeController {
             // Use the getAuthUser() in the future.
             Long createdBy = user.getId();
 
-            // TODO: check non null values
-            if (payload.calories == null) {
-                payload.calories = 99L;
-            }
-            List<IngredientAmount> ingredients = new ArrayList<>();
-            Recipe recipe = new Recipe(payload.title, payload.content, createdBy, ingredients,
-                    payload.time, payload.serves, payload.calories, payload.tags, payload.appliances);
+            return recipeService.createRecipie(payload, createdBy);
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ErrorResponse(500, "Internal Server Error"));
 
-            recipeService.addRecipe(recipe);
+        }
+    }
 
-            for (Map<String, String> ingredient : payload.ingredients) {
-                IngredientAmount newIngredient = new IngredientAmount(
-                        recipe,
-                        ingredient.get("ingredient"),
-                        Double.parseDouble(ingredient.get("amount")),
-                        ingredient.get("unit"));
-                ingredientAmountRepository.save(newIngredient);
-                ingredients.add(newIngredient);
-            }
-            // Sure that works, ill change a few things to match this in the future
-            recipe = recipeService.addRecipe(recipe);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse(recipe));
+    @PostMapping(path = "/new")
+    public ResponseEntity<?> editRecipe(
+            @RequestBody @Valid NewRecipeRequest payload
+    ) {
+        User user = userService.getAuthUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    new ErrorResponse(401, "You must be logged in to create a edit recipe."));
+        }
+        try {
+            return recipeService.editRecipe(payload, user);
         } catch (Exception e) {
             System.out.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(

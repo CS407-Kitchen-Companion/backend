@@ -20,6 +20,7 @@ import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -232,28 +233,31 @@ public class UserController {
 //        System.out.println("auth1");
         try {
             authenticate(payload.get("username"), payload.get("password"));
-        } catch (BadCredentialsException e) {
+
+//        System.out.println("auth2");
+
+            final UserDetails userDetails = userDetailsService
+                    .loadUserByUsername(payload.get("username"));
+
+            final User user = userRepository.findByUsername(userDetails.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("No such username"));
+
+            if (!user.isVerified()) {
+                return ResponseEntity.status(400).body(new ErrorResponse(400, "Please verify your email."));
+            }
+
+            final String token = jwtTokenUtil.generateToken(userDetails);
+
+            return ResponseEntity.ok(new JwtResponse(token, user.getId()));
+
+        } catch (UsernameNotFoundException | BadCredentialsException e) {
             return ResponseEntity.status(401).body(
                     new ErrorResponse(401, "No user exists with such a username or password combination."));
 
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(500).body(new ErrorResponse("Unknown Error"));
         }
-//        System.out.println("auth2");
-
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(payload.get("username"));
-
-        final User user = userRepository.findByUsername(userDetails.getUsername()).orElse(null);
-//        if (user == null) {
-//            return ResponseEntity.status(400).body(
-//                    new ErrorResponse(400, "No user exists with such a username or password combination."));
-//        }
-        if (!user.isVerified()) {
-            return ResponseEntity.status(400).body(new ErrorResponse(400, "Please verify your email."));
-        }
-
-        final String token = jwtTokenUtil.generateToken(userDetails);
-
-        return ResponseEntity.ok(new JwtResponse(token, user.getId()));
     }
 
     private void authenticate(String username, String password) throws Exception {

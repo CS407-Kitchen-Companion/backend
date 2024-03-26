@@ -91,13 +91,26 @@
 ```
 
 #### Response Body
-
+Correct Example
 ```json
 {
-  "token": "eyJhbGciOiJIUzUxMiJ9..."
+  "response": 56,
+  "status": 200,
+  "error": false,
+  "data": {
+    "token": "eyJhbGciOiJIUzUxMiJ9..."
+  }
 }
 ```
-
+Error Example
+```json
+{
+    "response": "No user exists with such a username or password combination.",
+    "status": 401,
+    "error": true,
+    "data": null
+}
+```
 ### get user
 
 #### Request Body
