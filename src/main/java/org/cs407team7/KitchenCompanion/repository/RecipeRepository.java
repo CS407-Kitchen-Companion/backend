@@ -27,6 +27,15 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     List<Recipe> findByAppliancesIn(List<String> appliances);
 
+    @Query(value = "SELECT DISTINCT appliances FROM recipe_appliances", nativeQuery = true)
+    List<String> findDistinctAppliances();
+
+    @Query(value = "SELECT DISTINCT serves FROM recipes", nativeQuery = true)
+    List<String> findDistinctServes();
+
+    @Query(value = "SELECT DISTINCT CASE WHEN time <= 30 THEN '0-30 minutes' WHEN time > 30 AND time <= 60 THEN '31-60 minutes' WHEN time > 60 AND time <= 90 THEN '61-90 minutes' WHEN time > 90 AND time <= 120 THEN '91-120 minutes' ELSE 'Over 120 minutes' END AS time_range FROM recipes", nativeQuery = true)
+    List<String> findTimeRanges();
+
     List<Recipe> findByCaloriesLessThanEqual(Long calories);
 
     List<Recipe> findAll(Specification<Recipe> spec);
