@@ -2,6 +2,7 @@
 Suggested Flow
 ```commandline
 cd /kitchencompanion/backend
+git pull
 sudo systemctl stop kitcomp
 mvn clean
 mvn package -DskipTests=true
