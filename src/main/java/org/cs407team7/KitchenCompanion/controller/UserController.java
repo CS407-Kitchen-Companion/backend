@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.cs407team7.KitchenCompanion.entity.Recipe;
 import org.cs407team7.KitchenCompanion.entity.User;
 import org.cs407team7.KitchenCompanion.repository.UserRepository;
+import org.cs407team7.KitchenCompanion.requestobject.UserUpdateRequest;
 import org.cs407team7.KitchenCompanion.responseobject.ErrorResponse;
 import org.cs407team7.KitchenCompanion.responseobject.GenericResponse;
 import org.cs407team7.KitchenCompanion.responseobject.PublicUserDataResponse;
@@ -307,4 +308,24 @@ public class UserController {
         return ResponseEntity.ok(new GenericResponse("User with ID " + id + " was successfully deleted."));
     }
 
+
+    @PutMapping(value = "/{id}/update")
+    public ResponseEntity<?> updateUserPhotoAndDetails(
+            @PathVariable Long id,
+            @RequestBody UserUpdateRequest request
+    ) {
+
+        Optional<User> userOptional = userRepository.findById(id);
+        if (!userOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "User not found"));
+        }
+
+        User user = userOptional.get();
+        user.setPhoto(request.getPhoto());
+        user.setDetails(request.getDetails());
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok(new GenericResponse("User photo and details updated successfully"));
+    }
 }
