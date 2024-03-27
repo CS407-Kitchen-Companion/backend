@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -103,14 +104,30 @@ public class RecipeController {
         }
     }
 
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @GetMapping(path = "/{id}")
     public ResponseEntity<Object> getRecipe(@PathVariable Long id) {
         try {
             Recipe recipe = recipeService.getRecipeById(id);
-            return ResponseEntity.ok(new GenericResponse(201, recipe));
+            if (recipe == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponse(404, "Could not find a recipe with that ID"));
+            }
+
+            Map<String, Object> recipeData = objectMapper.convertValue(recipe, Map.class);
+
+            List<Comment> comments = commentRepository.findByRecipe(id);
+            List<Map<String, Object>> nestedComments = buildNestedComments(comments);
+            recipeData.put("comments", nestedComments); // Add nested comments to the response
+
+            return ResponseEntity.ok(new GenericResponse(201, recipeData));
         } catch (ResponseStatusException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                return ResponseEntity.status(404).body(new ErrorResponse(404, "Could not find a recipe with that Id"));
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponse(404, "Could not find a recipe with that ID"));
             } else {
                 throw e;
             }
@@ -119,6 +136,34 @@ public class RecipeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal Server Error"));
         }
+    }
+
+    private List<Map<String, Object>> buildNestedComments(List<Comment> comments) {
+        List<Map<String, Object>> nestedComments = new ArrayList<>();
+        Map<Long, Map<String, Object>> commentMap = new HashMap<>();
+
+        for (Comment comment : comments) {
+            Map<String, Object> commentData = new HashMap<>();
+            commentData.put("id", comment.getId());
+            commentData.put("content", comment.getContent());
+            commentData.put("createdBy", comment.getCreatedBy());
+            commentData.put("replies", new ArrayList<>()); // Placeholder for child comments
+            commentMap.put(comment.getId(), commentData);
+        }
+
+        for (Comment comment : comments) {
+            if (comment.getParentCommentId() != null) {
+                Map<String, Object> parent = commentMap.get(comment.getParentCommentId());
+                if (parent != null) {
+                    List<Map<String, Object>> replies = (List<Map<String, Object>>) parent.get("replies");
+                    replies.add(commentMap.get(comment.getId()));
+                }
+            } else {
+                nestedComments.add(commentMap.get(comment.getId())); // Top-level comment
+            }
+        }
+
+        return nestedComments;
     }
 
     @GetMapping(path = "/get")
