@@ -73,8 +73,8 @@ public class Recipe {
     @NotNull
     @JoinTable(
             name = "ingredient_list",
-            joinColumns = @JoinColumn(name = "ingredient_id"),
-            inverseJoinColumns = @JoinColumn(name = "recipie_id")
+            joinColumns = @JoinColumn(name = "recipe_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id")
     )
     private List<IngredientAmount> ingredients;
 //    private List<Long> ingredients;

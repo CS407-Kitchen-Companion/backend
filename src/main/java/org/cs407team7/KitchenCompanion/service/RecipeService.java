@@ -57,7 +57,7 @@ public class RecipeService {
 
         parseCreateIngredient(payload, ingredients, recipe);
 
-        if (recipe.getCalories() == null) {
+        if (recipe.getCalories() == null || recipe.getCalories() == 0) {
             recipe.setCalories(nutritionService.estimateCalories(ingredients));
         }
 
