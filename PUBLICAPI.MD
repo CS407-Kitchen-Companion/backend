@@ -294,6 +294,7 @@ N/A, use path: `/recipe/{id}`
       "Knife",
       "Literal_Kitchen"
     ],
+    "visibility": true,
     "tags": [
       "abc",
       "def",
