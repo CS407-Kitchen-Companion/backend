@@ -293,4 +293,18 @@ public class UserController {
         return rand.toString();
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body(new ErrorResponse(404, "A user with that Id could not be found"));
+        }
+
+        // Call the delete method in the repository
+        userRepository.delete(user);
+
+        // Return a successful response
+        return ResponseEntity.ok(new GenericResponse("User with ID " + id + " was successfully deleted."));
+    }
+
 }
