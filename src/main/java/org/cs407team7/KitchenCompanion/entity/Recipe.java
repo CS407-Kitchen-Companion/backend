@@ -66,6 +66,8 @@ public class Recipe {
     @ElementCollection
     private List<String> tags;
 
+    // TODO: TYPO IN RECIPE
+
     @JsonManagedReference
     @OneToMany
     @NotNull
@@ -116,6 +118,18 @@ public class Recipe {
         this.calories = calories;
         this.tags = tags;
         this.appliances = appliances;
+    }
+
+    public void largeEdit(String title, List<String> content, Long time, Long serves,
+                          Long calories, List<String> tags, List<String> appliances) {
+        this.title = title;
+        this.content = content;
+        this.time = time;
+        this.serves = serves;
+        this.calories = calories;
+        this.tags = tags;
+        this.appliances = appliances;
+        isEdited = true;
     }
 
     public Long getId() {

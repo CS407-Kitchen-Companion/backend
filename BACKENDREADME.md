@@ -29,6 +29,11 @@ sudo systemctl status kitcompmock
 
 ### Ingredient Disambiguation
 
-`Recipe`s contain `IngredientAmount`s, which have some measure meant
-in some system like Imperial or Metric. These classes contain a `Ingredient`,
-which store any other data like nutrition so we don't make 100k calls to the usda database
+Standard Units
+```
+0: invalid
+1: g
+2: ml
+```
+
+Will pick first to show up under search, if none, default to 0

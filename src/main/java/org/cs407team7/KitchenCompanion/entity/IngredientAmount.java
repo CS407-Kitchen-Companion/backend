@@ -27,21 +27,43 @@ public class IngredientAmount {
     @JoinColumn(name = "recipe_id", nullable = false)
     private Recipe recipe;
 
-    private String name;
+    private String ingredient;
 
     private Double amount;
 
     private String unit;
 
+    private Boolean isVolume;
+
+    private Double standardUnit;
+
+    private Integer parsedUnit;
+
     public IngredientAmount() {
 
     }
 
-    public IngredientAmount(Recipe recipe, String name, Double amount, String unit) {
+    public IngredientAmount(Recipe recipe, String ingredient, Double amount, String unit) {
         this.recipe = recipe;
-        this.name = name;
+        this.ingredient = ingredient;
         this.amount = amount;
         this.unit = unit;
+        parseUnit(amount, unit);
+    }
+
+    private void parseUnit(Double amount, String unit) {
+        switch (unit) {
+            case "g" -> {
+                standardUnit = amount;
+                parsedUnit = 1;
+            }
+            case "ml" -> {
+                standardUnit = amount;
+                parsedUnit = 2;
+            }
+            // Failure case
+            default -> parsedUnit = 0;
+        }
     }
 
     public Long getId() {
@@ -52,12 +74,12 @@ public class IngredientAmount {
         return recipe;
     }
 
-    public String getName() {
-        return name;
+    public String getIngredient() {
+        return ingredient;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setIngredient(String ingredient) {
+        this.ingredient = ingredient;
     }
 
     public Double getAmount() {
