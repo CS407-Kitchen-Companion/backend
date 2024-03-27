@@ -50,6 +50,12 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String email;
 
+    @Size(max = 256)
+    private String photo;
+
+    @Size(max = 1024)
+    private String details;
+
     @CreatedDate
     @Column(updatable = false)
     private Instant createdAt;
@@ -186,6 +192,22 @@ public class User implements UserDetails {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 }
 
