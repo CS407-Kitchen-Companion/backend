@@ -305,7 +305,7 @@ public class RecipeController {
 
 
             // Authorization check
-            if (!recipe.getCreatedBy().equals(1L)) {
+            if (!recipe.getCreatedBy().equals(user.getId())) {
 
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                         new ErrorResponse(403, "You do not have permission to remove this recipe."));
