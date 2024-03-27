@@ -1,12 +1,11 @@
 package org.cs407team7.KitchenCompanion.controller;
 
 import jakarta.validation.Valid;
+import org.cs407team7.KitchenCompanion.entity.Comment;
 import org.cs407team7.KitchenCompanion.entity.IngredientAmount;
 import org.cs407team7.KitchenCompanion.entity.Recipe;
 import org.cs407team7.KitchenCompanion.entity.User;
-import org.cs407team7.KitchenCompanion.repository.IngredientAmountRepository;
-import org.cs407team7.KitchenCompanion.repository.RecipeRepository;
-import org.cs407team7.KitchenCompanion.repository.UserRepository;
+import org.cs407team7.KitchenCompanion.repository.*;
 import org.cs407team7.KitchenCompanion.requestobject.NewRecipeRequest;
 import org.cs407team7.KitchenCompanion.responseobject.ErrorResponse;
 import org.cs407team7.KitchenCompanion.responseobject.GenericResponse;
@@ -15,6 +14,7 @@ import org.cs407team7.KitchenCompanion.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -33,18 +33,26 @@ public class RecipeController {
 
     private final RecipeRepository recipeRepository;
 
+    private final RatingRepository ratingRepository;
+
+    private final CommentRepository commentRepository;
+
     private final IngredientAmountRepository ingredientAmountRepository;
 
     @Autowired
     public RecipeController(UserService userService, UserRepository userRepository,
                             RecipeRepository recipeRepository,
                             RecipeService recipeService,
-                            IngredientAmountRepository ingredientAmountRepository) {
+                            RatingRepository ratingRepository,
+                            IngredientAmountRepository ingredientAmountRepository,
+                            CommentRepository commentRepository) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.recipeService = recipeService;
         this.recipeRepository = recipeRepository;
+        this.ratingRepository = ratingRepository;
         this.ingredientAmountRepository = ingredientAmountRepository;
+        this.commentRepository = commentRepository;
     }
 
     @PostMapping(path = "/new")
@@ -267,6 +275,53 @@ public class RecipeController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal Server Error"));
+        }
+    }
+
+
+    @PostMapping(path = "/{id}/remove")
+    @Transactional
+    public ResponseEntity<?> removeRecipe(@PathVariable Long id) {
+        User user = userService.getAuthUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    new ErrorResponse(401, "You must be logged in to remove a recipe."));
+        }
+
+        try {
+            Optional<Recipe> recipeOptional = recipeRepository.findById(id);
+            if (!recipeOptional.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        new ErrorResponse(404, "Could not find a recipe with that id."));
+            }
+
+            Recipe recipe = recipeOptional.get();
+            List<IngredientAmount> ingredients = new ArrayList<>(recipe.getIngredients());
+            recipe.getIngredients().clear();
+            recipe.setIngredients(new ArrayList<>());
+            recipeService.addRecipe(recipe);
+
+            ingredientAmountRepository.deleteAll(ingredients);
+
+
+            // Authorization check
+            if (!recipe.getCreatedBy().equals(1L)) {
+
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                        new ErrorResponse(403, "You do not have permission to remove this recipe."));
+            }
+
+
+            recipe.getRatings().forEach(ratingRepository::deleteById);
+            recipe.getComments().forEach(commentRepository::deleteById);
+//            recipeRepository.deleteById(id);
+            recipeRepository.delete(recipe);
+
+            return ResponseEntity.ok().body(new GenericResponse(200, "Recipe successfully removed."));
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ErrorResponse(500, "Internal Server Error"));
         }
     }
 
