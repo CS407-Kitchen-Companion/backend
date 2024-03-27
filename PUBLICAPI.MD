@@ -241,13 +241,13 @@ Calories optional value, if not provided, an estimate will be made.
     "ingredients": [
       {
         "id": 1,
-        "name": "p1",
+        "ingredient": "p1",
         "amount": 1.2,
         "unit": "kg"
       },
       {
         "id": 2,
-        "name": "p2",
+        "ingredient": "p2",
         "amount": 137.0,
         "unit": "g"
       }
