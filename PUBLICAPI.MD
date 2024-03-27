@@ -165,6 +165,7 @@ N/A, use path: `/saved`
 |--------|--------------|-----------------------------|--------------------------------------------|------|--------|
 | POST   | `/new`       | Used in new Recipe Creation | See [new recipe](#new-recipe)              | Y    | Active |
 | POST   | `/edit`      | Used in Recipe editing      | See [new recipe](#new-recipe) (provide id) | Y    | Active |
+| POST   | `/{id}/remove`      | Used in Recipe removal     | no body needed | Y    | Active |
 | GET    | `/{id}`      | Used to get a Recipe        | See [get recipe](#get-recipe)              | N    | Active |
 | GET    | `/get`       | Used to get several Recipes | See [get recipe multi](#get-recipe-multi)  | N    | Active |
 | GET    | `/{id}/save` | Used to get a Recipe        | Save a post as a user                      | Y    | Active |
@@ -187,6 +188,7 @@ Calories optional value, if not provided, an estimate will be made.
   "serves": 5,
   "time": 3600,
   "calories": 105,
+  "visibility": true,
   "tags": [
     "abc",
     "def",
@@ -293,6 +295,7 @@ N/A, use path: `/recipe/{id}`
       "Knife",
       "Literal_Kitchen"
     ],
+    "visibility": true,
     "tags": [
       "abc",
       "def",

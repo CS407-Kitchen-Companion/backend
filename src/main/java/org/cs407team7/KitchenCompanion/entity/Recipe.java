@@ -62,6 +62,9 @@ public class Recipe {
 //    @ElementCollection
 //    private List<String> steps;
 
+    @Column(name = "visibility")
+    private boolean visibility = true;
+
     // TODO: make entity with limited list not user supplied randomness
     @ElementCollection
     private List<String> tags;
@@ -73,8 +76,8 @@ public class Recipe {
     @NotNull
     @JoinTable(
             name = "ingredient_list",
-            joinColumns = @JoinColumn(name = "ingredient_id"),
-            inverseJoinColumns = @JoinColumn(name = "recipie_id")
+            joinColumns = @JoinColumn(name = "recipe_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id")
     )
     private List<IngredientAmount> ingredients;
 //    private List<Long> ingredients;
@@ -107,7 +110,7 @@ public class Recipe {
     }
 
     public Recipe(String title, List<String> content, Long createdBy, List<IngredientAmount> ingredients,
-                  Long time, Long serves, Long calories, List<String> tags, List<String> appliances) {
+                  Long time, Long serves, Long calories, List<String> tags, List<String> appliances, Boolean visibility) {
         this();
         this.title = title;
         this.content = content;
@@ -118,6 +121,7 @@ public class Recipe {
         this.calories = calories;
         this.tags = tags;
         this.appliances = appliances;
+        this.visibility = visibility;
     }
 
     public void largeEdit(String title, List<String> content, Long time, Long serves,
@@ -259,5 +263,13 @@ public class Recipe {
 
     public void setCalories(Long calories) {
         this.calories = calories;
+    }
+
+    public boolean isVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(boolean visibility) {
+        this.visibility = visibility;
     }
 }

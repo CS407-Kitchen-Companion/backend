@@ -328,4 +328,38 @@ public class UserController {
 
         return ResponseEntity.ok(new GenericResponse("User photo and details updated successfully"));
     }
+    @PostMapping(path = "/setVisibility")
+    public ResponseEntity<Object> setVisibility(@RequestBody Map<String, Object> payload) {
+        if (!payload.containsKey("userId") || !payload.containsKey("visible")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400, "Missing userId or visible parameter"));
+        }
+
+        long userId;
+        try {
+            userId = Long.parseLong(payload.get("userId").toString());
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400, "Invalid userId format"));
+        }
+
+        boolean visible;
+        try {
+            visible = (boolean) payload.get("visible");
+        } catch (ClassCastException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400, "Invalid visible parameter format"));
+        }
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (!userOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "User not found"));
+        }
+
+        User user = userOptional.get();
+        user.setVisible(visible);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(new GenericResponse("Visibility updated successfully."));
+    }
+
+
+
 }

@@ -28,6 +28,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    private boolean visible = true;
     private Boolean verified = false;
 
     @NotBlank
@@ -183,6 +184,14 @@ public class User implements UserDetails {
 
     public void setFolders(List<Long> folders) {
         this.folders = folders;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     public String getPhoto() {
