@@ -167,6 +167,7 @@ N/A, use path: `/saved`
 | POST   | `/edit`      | Used in Recipe editing      | See [new recipe](#new-recipe) (provide id) | Y    | Active |
 | GET    | `/{id}`      | Used to get a Recipe        | See [get recipe](#get-recipe)              | N    | Active |
 | GET    | `/get`       | Used to get several Recipes | See [get recipe multi](#get-recipe-multi)  | N    | Active |
+| POST   | `/setvisibility`       | Used to get several Recipes | See [set visibility]  | N    | Active |
 | GET    | `/{id}/save` | Used to get a Recipe        | Save a post as a user                      | Y    | Active |
 
 ## Recipe API Models
