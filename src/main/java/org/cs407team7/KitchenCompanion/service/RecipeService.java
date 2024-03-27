@@ -51,7 +51,7 @@ public class RecipeService {
 
         List<IngredientAmount> ingredients = new ArrayList<>();
         Recipe recipe = new Recipe(payload.title, payload.content, createdBy, ingredients,
-                payload.time, payload.serves, payload.calories, payload.tags, payload.appliances);
+                payload.time, payload.serves, payload.calories, payload.tags, payload.appliances, payload.visibility);
 
         addRecipe(recipe);
 

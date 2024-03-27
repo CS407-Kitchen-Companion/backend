@@ -31,4 +31,7 @@ public class NewRecipeRequest {
 
     // Optional for updating/editing
     public Long id;
+
+    public Boolean visibility;
+
 }
