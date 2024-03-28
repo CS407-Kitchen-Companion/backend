@@ -309,6 +309,29 @@ public class UserController {
     }
 
 
+    @RequestMapping(value = "/{id}/photo", method = RequestMethod.GET)
+    public ResponseEntity<?> getPhoto(
+            @PathVariable Long id
+    ) {
+        User user = userService.findUserById(id);
+        if (user == null) {
+            return ResponseEntity.status(404).body(new ErrorResponse(404, "A user with that Id could not found"));
+        }
+        return ResponseEntity.ok(new GenericResponse(user.getPhoto()));
+    }
+
+    @RequestMapping(value = "/{id}/details", method = RequestMethod.GET)
+    public ResponseEntity<?> getDetails(
+            @PathVariable Long id
+    ) {
+        User user = userService.findUserById(id);
+        if (user == null) {
+            return ResponseEntity.status(404).body(new ErrorResponse(404, "A user with that Id could not found"));
+        }
+        return ResponseEntity.ok(new GenericResponse(user.getDetails()));
+    }
+
+
     @PutMapping(value = "/{id}/update")
     public ResponseEntity<?> updateUserPhotoAndDetails(
             @PathVariable Long id,
