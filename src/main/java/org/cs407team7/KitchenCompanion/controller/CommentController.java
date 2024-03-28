@@ -121,4 +121,42 @@ public class CommentController {
         }
     }
 
+    @PutMapping("/{id}/addPhoto")
+    public ResponseEntity<?> updateCommentPhoto(@PathVariable Long id, @RequestParam String photo) {
+        User user = userService.getAuthUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(401, "Unauthorized"));
+        }
+
+        Optional<Comment> optionalComment = commentService.getComment(id);
+        if (optionalComment.isPresent()
+                && optionalComment.get().getCreatedBy().equals(user.getId())) {//a person can only modify his own comment
+            Comment comment = optionalComment.get();
+            comment.setCommentPhoto(photo);
+            commentService.addComment(comment);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(403, "Forbidden"));
+        }
+    }
+
+    @PutMapping("/{id}/deletePhoto")
+    public ResponseEntity<?> deleteCommentPhoto(@PathVariable Long id) {
+        User user = userService.getAuthUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(401, "Unauthorized"));
+        }
+
+        Optional<Comment> optionalComment = commentService.getComment(id);
+        if (optionalComment.isPresent()
+                && optionalComment.get().getCreatedBy().equals(user.getId())) { //a person can only delete his own comment
+            Comment comment = optionalComment.get();
+            comment.setCommentPhoto(null);
+            commentService.addComment(comment);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(403, "Forbidden"));
+        }
+    }
+
 }

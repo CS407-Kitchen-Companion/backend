@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.cs407team7.KitchenCompanion.entity.Recipe;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -43,6 +44,9 @@ public class Comment {
 
     private String content;
 
+    @Size(max = 256)
+    private String commentPhoto;
+
     @Column(nullable = true)
     private Long parentCommentId;
 
@@ -54,6 +58,14 @@ public class Comment {
 
     public Comment() {
 //        comments = new ArrayList<>();
+    }
+
+    public String getCommentPhoto() {
+        return commentPhoto;
+    }
+
+    public void setCommentPhoto(String commentPhoto) {
+        this.commentPhoto = commentPhoto;
     }
 
     public Long getId() {
